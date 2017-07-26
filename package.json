@@ -1,0 +1,21 @@
+{
+  "name": "manage-stem-app",
+  "version": "0.1.0",
+  "description": "Create and manage a basic stem and establishment application",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mciucu/manage-stem-app.git"
+  },
+  "bin": {
+    "stem-app": "./create.py"
+  },
+  "keywords": [
+    "stem"
+  ],
+  "author": "Mihai Ciucu and Eric P. Stavarache",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/mciucu/manage-stem-app/issues"
+  },
+  "homepage": "https://github.com/mciucu/manage-stem-app#readme"
+}
