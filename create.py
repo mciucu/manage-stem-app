@@ -5,9 +5,11 @@ import sys
 import shutil
 import argparse
 import subprocess
-
+import json
+from pprint import pprint
 
 global_requirements = ['babel-cli', 'rollup']
+stem_app_settings = None
 
 
 def colorize(text):
@@ -17,8 +19,11 @@ def colorize(text):
 
 
 def prompt_for(question):
-    # Print this and ask a Y/n question
-    pass
+    print(question + " [Y/n]")
+    choice = input().lower()
+    if choice.startswith("n"):
+        return False
+    return True
 
 
 def create_app(args):
@@ -56,8 +61,13 @@ def create_app(args):
 
 
 def ensure_stem_app():
-    # Make sure we're in a stem app folder
-    pass
+    global stemapp_settings
+    if os.path.isfile("stemapp.json"):
+        with open("stemapp.json") as data_file:
+            stemapp_settings = json.load(data_file)
+        pprint(stemapp_settings)
+    else:
+        sys.exit("Missing stemapp.json config")
 
 
 def upgrade_app(args):
@@ -76,6 +86,27 @@ def install_redis():
 
 def install_postgres():
     subprocess.check_call(["apt", "install", "postgresql"])
+
+
+def build_app(args):
+    rollup_dir = stemapp_settings["build"]["configDir"]
+    subprocess.check_call(["rollup", "-c"], cwd=rollup_dir)
+
+
+def watch_app(args):
+    rollup_dir = stemapp_settings["build"]["configDir"]
+    try:
+        subprocess.check_call(["rollup", "-c", "--watch"], cwd=rollup_dir)
+    except KeyboardInterrupt:
+        print("\rStopped watching")
+
+
+def run_app(args):
+    build_app(args)
+    try:
+        subprocess.check_call(["python3", "manage.py", "runserver"])
+    except KeyboardInterrupt:
+        print("\rStopped running")
 
 
 def main():
@@ -103,6 +134,15 @@ def main():
 
     if args.deploy:
         deploy_to_server(args)
+
+    if args.build:
+        build_app(args)
+
+    if args.watch:
+        watch_app(args)
+
+    if args.run:
+        run_app(args)
 
 
 if __name__ == "__main__":
