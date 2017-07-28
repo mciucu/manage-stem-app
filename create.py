@@ -2,10 +2,10 @@
 import inspect
 import os
 import sys
-import shutil
 import argparse
 import subprocess
 import json
+import multiprocessing
 
 global_requirements = ['babel-cli', 'rollup']
 stem_app_settings = None
@@ -97,12 +97,19 @@ def build_app(with_watch=False):
         sys.exit("\rStopped building")
 
 
-def run_app(args):
-    build_app()
+def run_server():
     try:
         subprocess.check_call(["python3", "manage.py", "runserver"])
     except KeyboardInterrupt:
         sys.exit("\rStopped running")
+
+
+def run_app(args):
+    stem_builder = multiprocessing.Process(target=build_app, args=[True])
+    stem_builder.start()
+
+    server_runner = multiprocessing.Process(target=run_server)
+    server_runner.start()
 
 
 def main():
