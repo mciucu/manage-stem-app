@@ -86,6 +86,11 @@ def install_postgres():
     subprocess.check_call(["apt", "install", "postgresql"])
 
 
+def update_python_requirements():
+    # TODO: check that requirements.txt exists and that pip/pip3 are installed
+    subprocess.check_call(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
+
+
 def build_app(with_watch=False):
     rollup_path = stemapp_settings["build"]["configPath"]
     try:
@@ -123,6 +128,7 @@ def main():
     action_type.add_argument("-b", "--build", help="Build the current project", action="store_true")
     action_type.add_argument("-w", "--watch", help="Build the project and watch for changes", action="store_true")
     action_type.add_argument("-r", "--run", help="Ensure the project is built in the background and run it", action="store_true")
+    action_type.add_argument("--seticon", help="Set a favicon to be used by the website", action="store")
     action_type.add_argument("-d", "--deploy", help="Deploy the source code to a remote server", action="store")
     action_type.add_argument("-v", "--version", help="Display the helper version", action="version", version="Stem App Manager 0.1.0")
 
