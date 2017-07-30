@@ -1,0 +1,6 @@
+{% load json_safe %}
+{# Add here all of our stuff that doesn't change often #}
+
+self.PUBLIC_STATE = {{state|json_safe}};
+self.PUBLIC_CONSTANTS = {{public_constants|json_safe}}
+self.ERROR_CODES = {};

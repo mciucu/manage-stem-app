@@ -7,11 +7,14 @@ import subprocess
 import json
 import multiprocessing
 
-global_requirements = ['babel-cli', 'rollup']
+global_npm_requirements = ['babel-cli', 'rollup']
 stem_app_settings = None
 
 
 def colorize(text):
+    if not isinstance(text, str):
+        # If it's not a string, should be iterable
+        return map(colorize, text)
     COLOR_CODE = '\033[95m'
     END_CODE = '\033[0m'
     return COLOR_CODE + text + END_CODE
@@ -33,8 +36,8 @@ def create_app(args):
         print("Directory {} already exists, not changing it!".format(project_dir))
         return -1
 
-    print("Globally installing {}\n".format(", ".join(map(colorize, global_requirements))))
-    subprocess.check_call(['sudo', 'npm', 'install', '-g'] + global_requirements)
+    print("Globally installing {}\n".format(", ".join(colorize(global_npm_requirements))))
+    subprocess.check_call(['sudo', 'npm', 'install', '-g'] + global_npm_requirements)
 
     print("Installing requirements with npm\n")
     subprocess.check_call(['npm', 'update'], cwd=project_dir)

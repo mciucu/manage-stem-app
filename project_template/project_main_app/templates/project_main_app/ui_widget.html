@@ -1,0 +1,14 @@
+{% extends "$$project_main_app$$/base.html" %}
+{% load staticfiles %}
+{% load json_safe %}
+
+{% block title %}{{page_title}}{% endblock %}
+
+{% block content %}
+    <script>
+        require(["Bundle", "{{widget_require}}"], function (Bundle, WidgetRequire) {
+            {% if state %}Bundle.GlobalState.importState({{state|json_safe}});{% endif %}
+            window.currentWidget = WidgetRequire.{{widget_class}}.create(document.body, {{widget_options|json_safe}});
+        });
+    </script>
+{% endblock %}
