@@ -2,7 +2,8 @@
   "project": {
     "name": "{{ project_name }}"
   },
-  "build": {
-    "configDir": "{{ project_main_app }}/static/js"
-  }
+  "build": [{
+    "type": "rollup",
+    "configPath": "{{ project_main_app }}/js"
+  }]
 }

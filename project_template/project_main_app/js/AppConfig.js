@@ -1,9 +1,12 @@
 import {UI, CodeEditor} from "UI";
 
 import {Ajax} from "base/Ajax";
+import {ensure} from "base/Require";
 import {getCookie} from "base/Utils";
 
 import {GlobalState} from "state/State";
+
+import {WebsocketSubscriber} from "websocket/WebsocketSubscriber";
 
 // Add an ajax preprocessor to always have the csfr token
 Ajax.addDefaultPreprocessor((options) => {
@@ -23,6 +26,6 @@ GlobalState.registerStream = function (streamName) {
 GlobalState.registerStream("global-events");
 
 //Register on the user event stream
-if (window.USER && window.USER.id) {
-    GlobalState.registerStream("user-" + USER.id + "-events");
+if (self.USER && self.USER.id) {
+    GlobalState.registerStream("user-" + self.USER.id + "-events");
 }

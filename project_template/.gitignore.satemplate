@@ -1,0 +1,43 @@
+# Ignored source files
+stemjsorg/local_settings.py
+
+
+# Ignored extensions
+*.log
+*.pid
+*.swo
+*.swp
+*.vi
+*.zip
+*.pyc
+*~
+
+# OS or IDE folders
+._*
+.cache
+.DS_Store
+.idea
+.project
+.settings
+.tmproj
+.tern-project
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+Thumbs.db
+tags
+
+# Other folders to ignore
+node_modules
+resources/local
+
+# Daedalus logs
+log/
+
+# Daedalus pids
+pid/
+
+# Static files
+/static/
+/package-lock.json

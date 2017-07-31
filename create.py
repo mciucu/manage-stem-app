@@ -105,6 +105,24 @@ def build_app(with_watch=False):
         sys.exit("\rStopped building")
 
 
+def setup_app(args):
+    setup_type = args.setup
+    context = {
+        "secret_key": "123"
+    }
+    # Check if postgres and redis are not installed and offer to install them
+    # Install npm and python dependencies
+    # Create files in .gitignore (local_settings.py)
+    # Generate a new DB, if needed
+    # Ask if user wants to import a DB from somewhere
+    # Apply migrations to DB
+    # Create a new superuser account (if desired)
+    # Build the js
+    # [production] install fail2ban, nginx, etc.
+    # [production] setup sysctl.conf and security limits
+    # [production] generate a HTTPS key
+
+
 def run_server():
     try:
         subprocess.check_call(["python3", "manage.py", "runserver"])
@@ -125,6 +143,10 @@ def main():
 
     action_type = parser.add_mutually_exclusive_group()
     action_type.add_argument("-c", "--create", help="Create a new Stem app", action="store")
+    action_type.add_argument("-s", "--setup",
+                             help="Configure a newly clones app",
+                             action="store",
+                             choices=["production", "dev"])
     action_type.add_argument("-u", "--upgrade", help="Update the project to the latest stem and establishment version",
                              action="store",
                              choices=["app", "establishment", "stem", "npm"])
