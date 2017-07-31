@@ -3,10 +3,12 @@ import {UI, CodeEditor} from "UI";
 import {Ajax} from "base/Ajax";
 import {ensure} from "base/Require";
 import {getCookie} from "base/Utils";
+import {PageTitleManager} from "base/PageTitleManager";
+import {WebsocketSubscriber} from "websocket/WebsocketSubscriber";
 
 import {GlobalState} from "state/State";
 
-import {WebsocketSubscriber} from "websocket/WebsocketSubscriber";
+PageTitleManager.setDefaultTitle("{{project_long_name}}");
 
 // Add an ajax preprocessor to always have the csfr token
 Ajax.addDefaultPreprocessor((options) => {

@@ -28,6 +28,16 @@ def prompt_for(question):
     return True
 
 
+def render_template(path_from, path_to, context):
+    import jinja2
+
+    with open(path_from, "r") as content_file:
+        template_content = content_file.read()
+    rendered_content = jinja2.Environment().from_string(template_content).render(context)
+    with open(path_to, "w") as rendered_file:
+        rendered_file.write(rendered_content)
+
+
 def create_app(args):
     executable_path = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 
@@ -35,6 +45,13 @@ def create_app(args):
     if os.path.exists(project_dir):
         print("Directory {} already exists, not changing it!".format(project_dir))
         return -1
+
+    template_dir = "project_template"
+
+    for root, dirs, files in os.walk(template_dir):
+        print(root, dirs, files)
+
+    return
 
     print("Globally installing {}\n".format(", ".join(colorize(global_npm_requirements))))
     subprocess.check_call(['sudo', 'npm', 'install', '-g'] + global_npm_requirements)
