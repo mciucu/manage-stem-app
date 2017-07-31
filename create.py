@@ -31,17 +31,41 @@ def prompt_for(question):
 def render_template(path_from, path_to, context):
     import jinja2
 
+    output_is_template = False
+
+    if path_from.endswith(".satemplate"):
+        path_to = path_to.replace(".satemplate", "")
+
+    if path_to.endswith(".template"):
+        path_to = path_to.replace(".template", "")
+        output_is_template = True
+
+    output_is_template = output_is_template or path_to.endswith(".html")
+
     with open(path_from, "r") as content_file:
         template_content = content_file.read()
-    rendered_content = jinja2.Environment().from_string(template_content).render(context)
+
+    if not output_is_template:
+        template_content = jinja2.Environment().from_string(template_content).render(context)
+
+    os.makedirs(os.path.dirname(path_to), exist_ok=True)
     with open(path_to, "w") as rendered_file:
-        rendered_file.write(rendered_content)
+        rendered_file.write(template_content)
 
 
 def create_app(args):
     executable_path = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 
-    project_dir = args.create
+    project_name = args.create
+    project_dir = project_name
+    project_main_app = project_name + "app"
+
+    context = {
+        "author_name": "Fane Coliva",
+        "project_name": project_name,
+        "project_main_app": project_main_app,
+    }
+
     if os.path.exists(project_dir):
         print("Directory {} already exists, not changing it!".format(project_dir))
         return -1
@@ -49,7 +73,14 @@ def create_app(args):
     template_dir = "project_template"
 
     for root, dirs, files in os.walk(template_dir):
-        print(root, dirs, files)
+        for file in files:
+            template_file = os.path.join(root, file)
+            dest_file = template_file.replace("project_template/", project_dir + "/")
+            dest_file = dest_file.replace("/project_name/", "/" + project_name + "/")
+            dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
+            #if getattr(args, "verbose", 0) >= 2:
+            print("Rendering template:", template_file, "->", dest_file)
+            render_template(template_file, dest_file, context)
 
     return
 
@@ -141,6 +172,7 @@ def setup_app(args):
 
 
 def run_server():
+    #apt install -y build-essential
     try:
         subprocess.check_call(["python3", "manage.py", "runserver"])
     except KeyboardInterrupt:
