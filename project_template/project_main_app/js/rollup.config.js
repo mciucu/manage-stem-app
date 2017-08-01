@@ -7,7 +7,7 @@ var path = require('path');
 
 var rootDir = __dirname;
 
-while (!fs.existsSynch(rootDir + "/stemapp.json")) {
+while (!fs.existsSync(rootDir + "/stemapp.json")) {
     rootDir = path.dirname(rootDir);
     if (rootDir === path.dirname(rootDir)) {
         exit("Can't find stemapp.json in the path tree.");
@@ -16,7 +16,7 @@ while (!fs.existsSynch(rootDir + "/stemapp.json")) {
 
 rootDir = path.normalize(rootDir + "/");
 
-let establishmentModules = ["accounts", "blog", "chat", "content", "documentation", "errors", "forum", "localization"];
+let establishmentModules = ["accounts", "blog", "chat", "content", "funnel", "documentation", "errors", "forum", "localization"];
 let modules = ["analytics", "{{project_main_app}}"];
 for (let module of establishmentModules) {
     modules.push("establishment/" + module);
@@ -34,6 +34,8 @@ let modulesDirectories = [
 ];
 
 for (let module of modules) {
+    modulesDirectories.push(path.join(rootDir, module, "/js"));
+    modulesDirectories.push(path.join(rootDir, module, "/js/state"));
     modulesDirectories.push(path.join(rootDir, module, "/static/js"));
     modulesDirectories.push(path.join(rootDir, module, "/static/js/state"));
 }
@@ -48,7 +50,7 @@ let includePathOptions = {
 
 
 export default {
-    entry: "Bundle.es6.js",
+    entry: "Bundle.js",
     format: "umd",
     moduleId: "bundle",
     moduleName: "bundle",
