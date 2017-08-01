@@ -30,22 +30,42 @@ def prompt_for(question):
 
 def render_template(path_from, path_to, context):
     import jinja2
+    import uuid
 
     output_is_template = False
+    preserve_input = False
 
-    if path_from.endswith(".satemplate"):
-        path_to = path_to.replace(".satemplate", "")
+    if path_to.endswith(".rawfile"):
+        path_to = os.path.splitext(path_to)[0]
+        preserve_input = True
 
-    if path_to.endswith(".template"):
-        path_to = path_to.replace(".template", "")
+    if path_to.endswith(".template") and not preserve_input:
+        path_to = os.path.splitext(path_to)[0]
         output_is_template = True
 
-    output_is_template = output_is_template or path_to.endswith(".html")
+    # if getattr(args, "verbose", 0) >= 2:
+    print("Rendering", path_from, "->", path_to)
 
     with open(path_from, "r") as content_file:
         template_content = content_file.read()
 
-    if not output_is_template:
+    if output_is_template:
+        unique_string = uuid.uuid4().hex
+
+        template_content = template_content.replace("}}", unique_string)
+        template_content = template_content.replace("{{", '{{"{{"}}')
+        template_content = template_content.replace(unique_string, '{{"}}"}}')
+        template_content = template_content.replace("{%", '{{"{%"}}')
+        template_content = template_content.replace("%}", '{{"%}"}}')
+        template_content = template_content.replace("{#", '{{"{#"}}')
+        template_content = template_content.replace("#}", '{{"#}"}}')
+
+        template_content = template_content.replace("}$", unique_string)
+        template_content = template_content.replace("${", "{{")
+        template_content = template_content.replace(unique_string, "}}")
+
+    if not preserve_input:
+        # Actually render the template
         template_content = jinja2.Environment().from_string(template_content).render(context)
 
     os.makedirs(os.path.dirname(path_to), exist_ok=True)
@@ -64,6 +84,7 @@ def create_app(args):
         "author_name": "Fane Coliva",
         "project_name": project_name,
         "project_main_app": project_main_app,
+        "project_description": "My first demo app",
     }
 
     if os.path.exists(project_dir):
@@ -78,8 +99,6 @@ def create_app(args):
             dest_file = template_file.replace("project_template/", project_dir + "/")
             dest_file = dest_file.replace("/project_name/", "/" + project_name + "/")
             dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
-            #if getattr(args, "verbose", 0) >= 2:
-            print("Rendering template:", template_file, "->", dest_file)
             render_template(template_file, dest_file, context)
 
     return

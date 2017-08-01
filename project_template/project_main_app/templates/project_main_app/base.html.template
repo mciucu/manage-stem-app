@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}$$project_long_name$${% endblock %}</title>
+    <title>{% block title %}${project_long_name}${% endblock %}</title>
     <meta charset="utf-8">
-    <meta name="description" content="{{ project_description }}">
+    <meta name="description" content="${ project_description }$">
 {# The following 2 tags are for facebook share image display. #}
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#"></html>
     <meta property="og:image" content="{% static "icon.png"  %}" />

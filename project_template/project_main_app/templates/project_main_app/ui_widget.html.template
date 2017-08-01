@@ -1,4 +1,4 @@
-{% extends "$$project_main_app$$/base.html" %}
+{% extends "${project_main_app}$/base.html" %}
 {% load staticfiles %}
 {% load json_safe %}
 
