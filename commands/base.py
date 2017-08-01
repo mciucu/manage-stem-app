@@ -4,10 +4,15 @@ from .settings import StemAppSettings
 
 
 class BaseStemAppCommand(object):
+    settings = None
+    
+    def load_settings(self):
+        self.settings = StemAppSettings(self.path)
+
     def __init__(self, *args, **kwargs):
         self.path = kwargs.get("path", ".")
         self.args = kwargs.get("args", object())
-        self.settings = StemAppSettings(self.path)
+        self.load_settings()
 
     def get_manager_resource(self, resource=""):
         import inspect

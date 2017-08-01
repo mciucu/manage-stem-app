@@ -57,6 +57,9 @@ class SettingsFileManager(object):
             # TODO: do a deep copy here, also changing the case
             self.settings = extra
 
+        if not hasattr(self, "settings"):
+            self.settings = dict()
+
     def get(self, *args, default=None):
         current_value = self.settings
         for index, arg in enumerate(args):
