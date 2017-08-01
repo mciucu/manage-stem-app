@@ -1,9 +1,0 @@
-{
-  "project": {
-    "name": "{{ project_name }}"
-  },
-  "build": [{
-    "type": "rollup",
-    "configPath": "{{ project_main_app }}/js"
-  }]
-}
