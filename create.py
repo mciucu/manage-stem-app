@@ -10,6 +10,8 @@ import multiprocessing
 global_npm_requirements = ['babel-cli', 'rollup']
 stem_app_settings = None
 
+licenses = ['', 'a', 'b', 'c']
+
 
 def colorize(text):
     if not isinstance(text, str):
@@ -26,6 +28,65 @@ def prompt_for(question):
     if choice.startswith("n"):
         return False
     return True
+
+
+def get_setting_from_console(message):
+    print(message)
+    return input()
+
+
+def is_valid_license(app_license):
+    return app_license in licenses
+
+
+def get_license_from_console():
+    while True:
+        app_license = get_setting_from_console("Enter the license name {} (empty for no license): ".format(licenses))
+
+        if is_valid_license(app_license):
+            return app_license
+
+        print("Invalid license. Please try again.")
+
+
+def check_config_from_file(data):
+    if not is_valid_license(data["license"]):
+        print("Invalid license. Should be on the list {} (empty for no license): ".format(licenses))
+        return
+    return data
+
+
+def get_app_config_from_console(args):
+    # short_name = get_setting_from_console("Enter your app's short name: ")
+    short_name = args.create;
+
+    long_name = get_setting_from_console("Enter your app's long name: ")
+    author = get_setting_from_console("Enter your name: ")
+    app_license = get_license_from_console()
+    description = get_setting_from_console("Enter your app's description: ")
+
+    return {
+        "short_name": short_name,
+        "project_name": long_name,
+        "author_name": author,
+        "license": app_license,
+        "project_description": description,
+    }
+
+
+def get_app_config_from_file(filename):
+    with open(filename) as data_file:
+        data = json.load(data_file)
+        return check_config_from_file(data)
+
+
+def get_app_config(args):
+    if not os.path.isfile(args.create):
+        app_config = get_app_config_from_console(args)
+    else:
+        app_config = get_app_config_from_file(args.create)
+
+    return app_config
 
 
 def render_template(path_from, path_to, context):
@@ -80,12 +141,20 @@ def create_app(args):
     project_dir = project_name
     project_main_app = project_name + "app"
 
-    context = {
-        "author_name": "Fane Coliva",
-        "project_name": project_name,
-        "project_main_app": project_main_app,
-        "project_description": "My first demo app",
-    }
+    # context = {
+    #     "author_name": "Fane Coliva",
+    #     "project_name": project_name,
+    #     "project_main_app": project_main_app,
+    #     "project_description": "My first demo app",
+    # }
+    context = get_app_config(args)
+
+    # print the json in {project_name}.stemapp.json
+    with open(context["project_name"] + ".stemapp.json", 'w') as output_file:
+        sys.stdout = output_file
+        print(json.dumps(context, indent=4, sort_keys=True))
+
+    # {project_name}.stemapp.json
 
     if os.path.exists(project_dir):
         print("Directory {} already exists, not changing it!".format(project_dir))
@@ -116,17 +185,6 @@ def create_app(args):
         install_redis()
     if prompt_for("Do you want to install postgres?"):
         install_postgres()
-
-    print("\nSuccessfully created project {} at {}".format(colorize(project_dir), colorize(os.path.abspath(project_dir))))
-    print("Check out the README located there")
-    print("\nInside that directory, you can run\n")
-    print("\tnpm start")
-    print("\t\tto start a simple development server\n")
-
-    print("\tnpm run-script watch")
-    print("\t\tto watch for changes and recompile\n")
-
-    print("Also try {} --help for more options (such as express or django backend)".format(sys.argv[0]))
 
 
 def ensure_stem_app():
