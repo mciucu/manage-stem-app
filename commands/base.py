@@ -1,6 +1,12 @@
 import os
+import random
 
 from .settings import StemAppSettings
+
+
+def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"):
+    rng = random.SystemRandom()
+    return ''.join(rng.choice(allowed_chars) for _ in range(length))
 
 
 class BaseStemAppCommand(object):

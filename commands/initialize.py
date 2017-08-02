@@ -1,6 +1,6 @@
 import os
 
-from commands.base import BaseStemAppCommand
+from commands.base import BaseStemAppCommand, generate_random_key
 
 
 def render_template(path_from, path_to, context, verbosity=2):
@@ -51,7 +51,6 @@ def render_template(path_from, path_to, context, verbosity=2):
 class InitializeStemAppCommand(BaseStemAppCommand):
     def init_from_template(self, context):
         template_dir = self.get_manager_resource("project_template")
-        print("Template dir", template_dir)
 
         project_name = context["project_name"]
         project_main_app = context["project_main_app"]
@@ -74,11 +73,27 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
     def run(self):
         project_settings = self.settings.get("project")
+
+        establishment_apps = ["establishment.accounts",
+                            "establishment.socialaccount",
+                            "establishment.localization",
+                            "establishment.errors",
+                            "establishment.content",
+                            "establishment.baseconfig",
+                            "establishment.documentation",
+                            "establishment.emailing",
+                            "establishment.chat",
+                            "establishment.blog",
+                            "establishment.forum",]
+
         context = {
             "author": project_settings["author"],
             "project_name": project_settings["name"],
             "project_main_app": project_settings["name"] + "app",
             "project_description": project_settings["description"],
+            "django_version": "1.11",
+            "allowed_hosts": '"*"',
+            "secret_key": generate_random_key(),
         }
 
         self.init_from_template(context)
