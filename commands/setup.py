@@ -70,7 +70,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
 
         self.run_command(["python3", "manage.py", "migrate"])
 
-        if prompt_for("Would you like to create an account with superuser (admin) rights?"):
+        if prompt_for("Would you like to create a website account with superuser (admin) rights?"):
             self.run_command(["python3", "manage.py", "createsuperuser"])
 
         BuildStemAppCommand(watch=False).run()
@@ -95,13 +95,15 @@ class SetupStemAppCommand(BaseStemAppCommand):
             if not is_installed(app):
                 install_app(app)
 
-        self.run_command(["curl", "-sL", "https://deb.nodesource.com/setup_8.x"])
         update_apt()
         if not is_installed("nodejs"):
+            self.run_command(["curl", "-sL", "https://deb.nodesource.com/setup_8.x"])
+            update_apt()
             install_app("nodejs")
 
         self.run_command(["npm", "install", "-g", "babel-cli", "rollup"])
         self.run_command(["npm", "install", "--dev"])
+        self.run_command(["npm", "install"])
         self.run_command(["easy_install3", "pip"])
         self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
 

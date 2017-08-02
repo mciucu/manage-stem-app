@@ -59,5 +59,5 @@ export default {
         babel(),
         // uglify(),
     ],
-    dest: "static/js/bundle.js"
+    dest: "../static/js/bundle.js"
 };
