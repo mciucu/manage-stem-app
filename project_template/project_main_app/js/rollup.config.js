@@ -52,7 +52,9 @@ let includePathOptions = {
 export default {
     entry: "Bundle.js",
     format: "umd",
-    moduleId: "bundle",
+    amd: {
+        id: "Bundle"
+    },
     moduleName: "bundle",
     plugins: [
         includePaths(includePathOptions),
