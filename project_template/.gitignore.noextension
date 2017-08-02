@@ -1,5 +1,5 @@
 # Ignored source files
-stemjsorg/local_settings.py
+{{project_name}}/local_settings.py
 
 
 # Ignored extensions

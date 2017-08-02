@@ -8,14 +8,13 @@ def render_template(path_from, path_to, context, verbosity=2):
     import uuid
 
     output_is_template = False
-    preserve_input = False
 
-    if path_to.endswith(".rawfile"):
-        path_to = os.path.splitext(path_to)[0]
-        preserve_input = True
+    path_to_without_extension, path_to_extension = os.path.splitext(path_to)
 
-    if path_to.endswith(".template") and not preserve_input:
-        path_to = os.path.splitext(path_to)[0]
+    if path_to_extension == ".noextension":
+        path_to = path_to_without_extension
+    elif path_to_extension == ".template":
+        path_to = path_to_without_extension
         output_is_template = True
 
     if verbosity >= 2:
@@ -25,6 +24,8 @@ def render_template(path_from, path_to, context, verbosity=2):
         template_content = content_file.read()
 
     if output_is_template:
+        # We're generating a template file itself, escape all the template strings
+        # Variables are passed as `${ name }$`
         unique_string = uuid.uuid4().hex
 
         template_content = template_content.replace("}}", unique_string)
@@ -39,9 +40,8 @@ def render_template(path_from, path_to, context, verbosity=2):
         template_content = template_content.replace("${", "{{")
         template_content = template_content.replace(unique_string, "}}")
 
-    if not preserve_input:
-        # Actually render the template
-        template_content = jinja2.Environment().from_string(template_content).render(context)
+    # Actually render the template
+    template_content = jinja2.Environment().from_string(template_content).render(context)
 
     os.makedirs(os.path.dirname(path_to), exist_ok=True)
     with open(path_to, "w") as rendered_file:
@@ -82,10 +82,11 @@ class InitializeStemAppCommand(BaseStemAppCommand):
             "content",
             "baseconfig",
             "documentation",
-            "emailing",
+            # "emailing",
             "chat",
             "blog",
             "forum",
+            "misc",
         ])
 
         context = {

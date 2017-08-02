@@ -19,6 +19,7 @@ class BaseStemAppCommand(object):
     def __init__(self, *args, **kwargs):
         self.path = kwargs.get("path", ".")
         self.args = kwargs.get("args", object())
+        self.verbosity = 10
         self.load_settings()
 
     def get_manager_resource(self, resource=""):
