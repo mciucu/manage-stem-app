@@ -20,7 +20,29 @@
         var USER = {{ USER }};
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.23.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="{% static "js/bundle.js" %}?v={{ JS_VERSION }}"></script>
+
+    <script>
+        window.requireConfig = {
+            waitSeconds: 60,
+            baseUrl: "/static",
+            urlArgs: "cachebust=" + JS_VERSION,
+            map: {
+                "*": {
+                    "AppClass": "Bundle",
+                }
+            },
+            paths: {
+                "Bundle": "js/bundle",
+                "PublicState": "js/state/PublicState",
+            },
+        };
+
+        require.config(window.requireConfig);
+    </script>
+
     <script>
         require(["Bundle"], function (bundle) {
             window.bundle = bundle;
