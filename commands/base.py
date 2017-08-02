@@ -10,6 +10,21 @@ def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123
     return ''.join(rng.choice(allowed_chars) for _ in range(length))
 
 
+def prompt_for(question, implicit_yes=True):
+    if implicit_yes:
+        print(question + " [Y/n]")
+        choice = input().lower()
+        if choice.startswith("n"):
+            return False
+        return True
+    else:
+        print(question + " [y/N]")
+        choice = input().lower()
+        if choice.startswith("y"):
+            return True
+        return False
+
+
 class BaseStemAppCommand(object):
     settings = None
     

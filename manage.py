@@ -7,6 +7,7 @@ from commands.build import BuildStemAppCommand
 from commands.create import CreateStemAppCommand
 from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
+from commands.run import RunStemAppCommand
 
 global_npm_requirements = ['babel-cli', 'rollup']
 
@@ -20,28 +21,6 @@ def colorize(text):
     COLOR_CODE = '\033[95m'
     END_CODE = '\033[0m'
     return COLOR_CODE + text + END_CODE
-
-
-def prompt_for(question):
-    print(question + " [Y/n]")
-    choice = input().lower()
-    if choice.startswith("n"):
-        return False
-    return True
-
-
-def install_redis():
-    subprocess.check_call(["apt", "update"])
-    subprocess.check_call(["apt", "install", "redis-server"])
-
-
-def install_postgres():
-    subprocess.check_call(["apt", "install", "postgresql"])
-
-
-def update_python_requirements():
-    # TODO: check that requirements.txt exists and that pip/pip3 are installed
-    subprocess.check_call(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
 
 
 def main():
@@ -81,8 +60,8 @@ def main():
     if args.watch:
         BuildStemAppCommand(watch=True).run()
 
-    # if args.run:
-    #     RunStemAppCommand().run()
+    if args.run:
+        RunStemAppCommand().run()
 
 
 if __name__ == "__main__":
