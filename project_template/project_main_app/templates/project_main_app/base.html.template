@@ -11,8 +11,6 @@
     <meta property="og:image" content="{% static "icon.png"  %}" />
     <link rel="image_src" href="{% static "icon.png" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}">
-    <link rel="stylesheet" href="{% static "css/ext/font-awesome.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/csacademy.css" %}?v=1">
 
     <script>
         var JS_VERSION = {{JS_VERSION}};
@@ -22,11 +20,6 @@
         var USER = {{ USER }};
     </script>
 
-    <script src="{% static "js/ext/min/polyfill.min.js" %}"></script>
-    <script src="{% static "js/ext/require.js" %}"></script>
-    <script src="{% static "require_config.js" %}?v={{ JS_VERSION }}"></script>
-    <script src="{% static "js/state/CSAPublicState.js" %}?v={{ JS_VERSION }}"></script>
-    <script src="{% static "js/EmojiMini.js" %}?v={{ JS_VERSION }}"></script>
     <script src="{% static "js/bundle.js" %}?v={{ JS_VERSION }}"></script>
     <script>
         require(["Bundle"], function (bundle) {

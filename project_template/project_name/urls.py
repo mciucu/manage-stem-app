@@ -13,11 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+import establishment.chat.views
 
 urlpatterns = [
     url(r'^djangoadmin/', admin.site.urls),
-    {{ establishment_urls }},
-    {{ project_urls }},
+    url(r"^", include("establishment.localization.urls")),
+    url(r"^", include("establishment.content.urls_single_page")),
+    url(r"^accounts/", include("establishment.accounts.urls_single_page")),
+
+    url(r"^blog/", include("establishment.blog.urls_single_page")),
+    url(r"^forum/", include("establishment.forum.urls_single_page")),
+    url(r"^docs/", include("establishment.documentation.urls")),
+    url(r"^chat/", include("establishment.chat.urls")),
+
+    url(r"^messages/", establishment.chat.views.private_chat),
+    # url(r"^email/", include("establishment.emailing.urls")),
+    url(r"^baseconfig/", include("establishment.baseconfig.urls")),
+
+    # Your own urls
+    url(r"^", include("{{project_main_app}}.urls")),
 ]
