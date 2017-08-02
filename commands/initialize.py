@@ -74,17 +74,19 @@ class InitializeStemAppCommand(BaseStemAppCommand):
     def run(self):
         project_settings = self.settings.get("project")
 
-        establishment_apps = ["establishment.accounts",
-                            "establishment.socialaccount",
-                            "establishment.localization",
-                            "establishment.errors",
-                            "establishment.content",
-                            "establishment.baseconfig",
-                            "establishment.documentation",
-                            "establishment.emailing",
-                            "establishment.chat",
-                            "establishment.blog",
-                            "establishment.forum",]
+        establishment_apps = map(lambda app_name: '"establishment.' + app_name + '"', [
+            "accounts",
+            "socialaccount",
+            "localization",
+            "errors",
+            "content",
+            "baseconfig",
+            "documentation",
+            "emailing",
+            "chat",
+            "blog",
+            "forum",
+        ])
 
         context = {
             "author": project_settings["author"],
@@ -94,6 +96,11 @@ class InitializeStemAppCommand(BaseStemAppCommand):
             "django_version": "1.11",
             "allowed_hosts": '"*"',
             "secret_key": generate_random_key(),
+            "establishment_apps": ",\n    ".join(establishment_apps),
+            "project_apps": '"' + project_settings["name"] + "app" + '"',
         }
 
         self.init_from_template(context)
+
+        if not os.path.exists(os.path.join(self.get_project_root(), "establishment")):
+            self.run_command(["git", "clone", "https://github.com/establishment/django-establishment", "establishment"])

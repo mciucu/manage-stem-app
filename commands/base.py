@@ -1,4 +1,5 @@
 import os
+import subprocess
 import random
 
 from .settings import StemAppSettings
@@ -28,6 +29,12 @@ class BaseStemAppCommand(object):
 
     def get_project_root(self):
         return self.path
+
+    def run_command(self, command, path=""):
+        path = os.path.join(self.get_project_root(), path)
+        if not isinstance(command, list):
+            command = list(command)
+        return subprocess.check_call(command, cwd=path)
 
     def run(self):
         raise NotImplementedError("Implement run()")

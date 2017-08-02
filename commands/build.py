@@ -12,13 +12,12 @@ class BuildStemAppCommand(BaseStemAppCommand):
         self.with_watch = kwargs.get("watch", False)
 
     def run(self):
-        subprocess.check_call(["npm", "install"], cwd=self.get_project_root())
+        self.run_command(["npm", "install"])
         rollup_path = self.settings.get("build", "config_path")
-        rollup_path = os.path.join(self.get_project_root(), rollup_path)
         try:
             commands = ["rollup", "-c"]
             if self.with_watch:
                 commands.append("--watch")
-            subprocess.check_call(commands, cwd=rollup_path)
+            self.run_command(commands, path=rollup_path)
         except KeyboardInterrupt:
             sys.exit("\rStopped building")
