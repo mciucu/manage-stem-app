@@ -1,9 +1,17 @@
-import {UI} from "UI";
+import {UI, TabArea, Panel, Button} from "UI";
 
 export class IndexPage extends UI.Element {
     render() {
         return [
-            "Welcome to the Main page",
+            <TabArea>
+                <Panel title="First">
+                    <h1>The first panel</h1>
+                </Panel>
+                <Panel title="Second">
+                    <h2>The second panel</h2>
+                    <Button>Push me!</Button>
+                </Panel>
+            </TabArea>
         ]
     }
 }

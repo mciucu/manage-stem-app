@@ -35,3 +35,6 @@ WSGI_APPLICATION = "establishment.websockredis.django_runserver.application"
 ENABLE_MANAGE_URLS = False
 ENABLE_LIVE_WEBSOCKETS = False
 FORCE_LIVE = False
+
+WEBSOCKET_HEARTBEAT_INTERVAL = 30.0
+WEBSOCKET_HEARTBEAT = "-hrtbt-"

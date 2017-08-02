@@ -55,7 +55,7 @@ export default {
     amd: {
         id: "Bundle"
     },
-    moduleName: "bundle",
+    moduleName: "Bundle",
     plugins: [
         includePaths(includePathOptions),
         babel(),
