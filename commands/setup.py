@@ -42,16 +42,18 @@ class SetupStemAppCommand(BaseStemAppCommand):
         database_connection.autocommit = True
         database_cursor = database_connection.cursor()
 
-        # TODO: Check if database exists already and offer to change database_name
-        database_cursor.execute("CREATE DATABASE " + database_name + ";")
-
         connection_settings["database"] = database_name
-        database_connection = psycopg2.connect(**connection_settings)
+        try:
+            database_connection = psycopg2.connect(**connection_settings)
+        except psycopg2.OperationalError:
+            database_cursor.execute("CREATE DATABASE " + database_name + ";")
+            database_connection = psycopg2.connect(**connection_settings)
+
         database_connection.autocommit = True
         database_cursor = database_connection.cursor()
         database_cursor.execute("GRANT ALL PRIVILEGES ON DATABASE " + database_name + " TO " + database_username + ";")
 
-        if prompt_for("Would you like to import a database?"):
+        if prompt_for("Would you like to import a database?", implicit_yes=False):
             self.import_database(database_cursor)
 
         database_connection.close()
