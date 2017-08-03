@@ -16,3 +16,6 @@ DATABASES = {
 DEFAULT_HTTP_PROTOCOL = "http"
 
 WSGI_APPLICATION = 'establishment.websockredis.django_runserver.application'
+
+WEBSOCKET_HEARTBEAT_INTERVAL = 30
+WEBSOCKET_HEARTBEAT = "--hrtbeet--"

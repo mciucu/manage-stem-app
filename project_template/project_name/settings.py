@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [{{ allowed_hosts }}]
 
 ADMINS = [{{ admin_accounts }}]
 
+AUTH_USER_MODEL = "{{ project_main_app }}.User"
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -1,3 +1,0 @@
-[submodule "establishment"]
-	path = establishment
-	url = https://github.com/establishment/django-establishment.git
