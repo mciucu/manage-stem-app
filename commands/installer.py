@@ -49,7 +49,7 @@ class LinuxInstaller(Installer):
             self.install_packages(["nodejs"])
 
     def install_pip(self):
-        self.run_command(["easy_install3" "pip"])
+        self.run_command(["easy_install3", "pip"])
 
 
 class MacInstaller(Installer):
