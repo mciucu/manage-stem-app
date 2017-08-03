@@ -61,7 +61,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
                 # TODO: Check if file is stemapp.json, and if so, add to setting with deep copy
                 template_file_relative = os.path.relpath(template_file, template_dir)
                 dest_file = os.path.join(self.get_project_root(), template_file_relative)
-                dest_file = dest_file.replace("/project_name/", "/" + project_name + "/")
+                dest_file = dest_file.replace("project_name", project_name)
                 dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
                 render_template(template_file, dest_file, context)
 

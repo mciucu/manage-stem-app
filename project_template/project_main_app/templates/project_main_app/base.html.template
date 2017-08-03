@@ -11,6 +11,9 @@
     <meta property="og:image" content="{% static "icon.png"  %}" />
     <link rel="image_src" href="{% static "icon.png" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "css/${project_name}$.css" %}?v=1">
 
     <script>
         var JS_VERSION = {{JS_VERSION}};

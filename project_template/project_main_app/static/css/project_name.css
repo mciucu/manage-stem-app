@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    font-family: "lato";
+}
+.hidden {
+    display: none !important;
+}
+* {
+    box-sizing: border-box;
+}

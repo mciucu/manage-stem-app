@@ -1,11 +1,11 @@
 import {UI, ViewportMeta} from "UI";
 import {MAIN_ROUTE} from "./Routes"
-import {Navbar} from "./Navbar";
+import {AppNavManager} from "./AppNavManager.jsx";
 import {StemApp} from "app/StemApp";
 
 export class AppClass extends StemApp {
     getBeforeContainer() {
-        return <Navbar ref="navbar"/>;
+        return <AppNavManager ref="navManager"/>;
     }
 
     getRoutes() {

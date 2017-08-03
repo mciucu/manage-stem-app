@@ -48,6 +48,10 @@ let includePathOptions = {
     extensions: [".es6.js", ".jsx", ".js"],
 };
 
+const argv = require("yargs").argv;
+
+const isProductionBuild = argv.production;
+const generateSourceMap = argv.sourceMap || isProductionBuild || true; // TODO
 
 export default {
     entry: "Bundle.js",
@@ -61,5 +65,6 @@ export default {
         babel(),
         // uglify(),
     ],
-    dest: "../static/js/bundle.js"
+    dest: "../static/js/bundle.js",
+    sourceMap: generateSourceMap,
 };
