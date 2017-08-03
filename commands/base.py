@@ -1,7 +1,6 @@
 import os
 import subprocess
 import random
-
 from .settings import StemAppSettings
 
 
@@ -25,6 +24,10 @@ def prompt_for(question, implicit_yes=True):
         return False
 
 
+def is_sudo():
+    return os.getuid() == 0
+
+
 class BaseStemAppCommand(object):
     settings = None
     
@@ -45,6 +48,9 @@ class BaseStemAppCommand(object):
 
     def get_project_root(self):
         return self.path
+
+    def get_project_path(self, *paths):
+        return os.path.join(self.get_project_root(), *paths)
 
     def run_command(self, command, path=""):
         path = os.path.join(self.get_project_root(), path)

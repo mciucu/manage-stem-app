@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import argparse
-import subprocess
 
 from commands.build import BuildStemAppCommand
 from commands.create import CreateStemAppCommand

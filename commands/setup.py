@@ -1,42 +1,37 @@
 import psycopg2
+import sys
 from commands.base import *
 from commands.initialize import render_template
 from commands.build import BuildStemAppCommand
-
-
-# TODO: This is perhaps not the best way to find out whether an app is installed or not (for example python3-dev)
-def is_installed(app):
-    return subprocess.call("type " + app, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
-
-
-def install_app(app):
-    subprocess.check_call(["apt", "install", "-y", app])
-
-
-def update_apt():
-    subprocess.check_call(["apt", "update"])
+from commands.installer import LinuxInstaller, MacInstaller
 
 
 class SetupStemAppCommand(BaseStemAppCommand):
     def __init__(self, setup_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setup_type = setup_type
-        # TODO: check that we have the settings for this
 
-    def run(self):
-        self.install_requirements()
+        if sys.platform == "darwin":
+            self.installer = MacInstaller()
+        else:
+            self.installer = LinuxInstaller()
 
-        project_name = self.settings.get("project", "name")
+    def ensure_database(self, database_name):
+        if prompt_for("Would you like to change your postgres password for user postgres?", implicit_yes=False):
+            print("Please enter the new password")
+            database_password = input()
+            self.run_command(["sudo", "-u", "postgres", "psql", "-c", "\"ALTER USER postgres PASSWORD '%s';\"" % database_password])
+        else:
+            print("Please enter the password")
+            database_password = input()
 
-        database_name = project_name
-        database_username = "postgres"
-        database_userpass = "postgres"
-
-        connection_settings = {"database" : "postgres",
-                               "user" : database_username,
-                               "password" : database_userpass,
-                               "host" : "127.0.0.1",
-                               "port" : "5432"}
+        connection_settings = {
+            "database": "postgres",
+            "user": "postgres",
+            "password": database_password,
+            "host": "127.0.0.1",
+            "port": "5432"
+        }
 
         database_connection = psycopg2.connect(**connection_settings)
         database_connection.autocommit = True
@@ -46,75 +41,70 @@ class SetupStemAppCommand(BaseStemAppCommand):
         try:
             database_connection = psycopg2.connect(**connection_settings)
         except psycopg2.OperationalError:
+            # if the database doesn't exist, creates it
             database_cursor.execute("CREATE DATABASE " + database_name + ";")
             database_connection = psycopg2.connect(**connection_settings)
 
         database_connection.autocommit = True
         database_cursor = database_connection.cursor()
-        database_cursor.execute("GRANT ALL PRIVILEGES ON DATABASE " + database_name + " TO " + database_username + ";")
+        database_cursor.execute("GRANT ALL PRIVILEGES ON DATABASE " + database_name + " TO postgres;")
 
         if prompt_for("Would you like to import a database?", implicit_yes=False):
-            self.import_database(database_cursor)
-
+            print("Please enter the path to the file")
+            file_path = input()
+            while not os.path.isfile(file_path) or not file_path.endswith(".sql"):
+                print("Invalid file path or file type, please try again..")
+                file_path = input()
+            self.run_command(["sudo", "-u", "postgres", "psql", database_name, "<", file_path])
+        else:
+            self.run_command(["python3", "manage.py", "migrate"])
         database_connection.close()
+
+    def run(self):
+        if not is_sudo():
+            sys.exit("Please re-run with administrator rights!")
+
+        self.install_requirements()
+
+        project_name = self.settings.get("project", "name")
+        database_name = project_name
 
         context = {
             "secret_key": generate_random_key(length=58),
             "database_name": database_name
         }
 
-        # if self.setup_type == "production":
         # TODO: modify context here
+        # if self.setup_type == "production":
+        #    install fail2ban, nginx, etc.
+        #    setup sysctl.conf and security limits
+        #    generate a HTTPS key
 
         template_file = self.get_manager_resource("project_template/resources/setup/dev/local_settings.py")
-        dest_file = os.path.join(self.get_project_root(), project_name + "/local_settings.py")
-        render_template(template_file, dest_file, context)
+        destination_file = self.get_project_path(project_name, "local_settings.py")
+        render_template(template_file, destination_file, context)
 
-        self.run_command(["python3", "manage.py", "migrate"])
+        self.ensure_database(database_name)
 
-        if prompt_for("Would you like to create a website account with superuser (admin) rights?"):
+        if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
             self.run_command(["python3", "manage.py", "createsuperuser"])
 
         BuildStemAppCommand(watch=False).run()
-        # [production] install fail2ban, nginx, etc.
-        # [production] setup sysctl.conf and security limits
-        # [production] generate a HTTPS key
 
     def install_requirements(self):
-        update_apt()
-        if not is_installed("psql"):
-            install_app("postgresql")
-            install_app("postgresql-server-dev-all")
+        self.installer.install_postgresql()
 
-        apps = [
-            "build-essential", "libssl-dev",
-            "curl", "redis-server", "g++",
-            "net-tools", "python3-dev",
-            "libpng-dev", "libjpeg-dev"
-        ]
+        required_packages = ["curl", "redis-server", "git"]
+        packages_to_be_installed = []
 
-        for app in apps:
-            if not is_installed(app):
-                install_app(app)
+        for package in required_packages:
+            if not self.installer.is_installed(package):
+                packages_to_be_installed.append(package)
 
-        update_apt()
-        if not is_installed("nodejs"):
-            self.run_command(["curl", "-sL", "https://deb.nodesource.com/setup_8.x"])
-            update_apt()
-            install_app("nodejs")
+        self.installer.install_packages(packages_to_be_installed)
+        self.installer.install_nodejs()
 
         self.run_command(["npm", "install", "-g", "babel-cli", "rollup"])
-        self.run_command(["npm", "install", "--dev"])
         self.run_command(["npm", "install"])
-        self.run_command(["easy_install3", "pip"])
+        self.installer.install_pip(["easy_install3", "pip"])
         self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
-
-    @staticmethod
-    def import_database(database_cursor):
-        print("Please enter the path to the file")
-        file_name = input()
-        while not os.path.isfile(file_name) or not file_name.endswith(".sql"):
-            print("Invalid file location or file type, please try again..")
-            file_name = input()
-        # TODO: this is not a proper way to import a database
-        database_cursor.execute(open(file_name, "r").read())
