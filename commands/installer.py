@@ -48,6 +48,9 @@ class LinuxInstaller(Installer):
             self.have_updated_package_manager = False
             self.install_packages(["nodejs"])
 
+    def install_pip(self):
+        self.run_command(["easy_install3" "pip"])
+
 
 class MacInstaller(Installer):
     PACKAGE_MANAGER = "brew"

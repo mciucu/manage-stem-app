@@ -106,5 +106,5 @@ class SetupStemAppCommand(BaseStemAppCommand):
 
         self.run_command(["npm", "install", "-g", "babel-cli", "rollup"])
         self.run_command(["npm", "install"])
-        self.installer.install_pip(["easy_install3", "pip"])
+        self.installer.install_pip()
         self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
