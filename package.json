@@ -1,6 +1,6 @@
 {
   "name": "stem-app",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Create and manage a basic stem and establishment application",
   "repository": {
     "type": "git",
