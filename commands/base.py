@@ -24,6 +24,16 @@ def prompt_for(question, implicit_yes=True):
         return False
 
 
+def valid_input_for(query, on_fail="Please try again: ", is_valid=lambda x: x != ""):
+    message = query
+    while True:
+        print(message, end="")
+        x = input()
+        if is_valid(x):
+            break
+        message = on_fail
+
+
 def is_sudo():
     return os.getuid() == 0
 

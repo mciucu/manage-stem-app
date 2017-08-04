@@ -10,20 +10,14 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def __init__(self, setup_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setup_type = setup_type
-
-        if sys.platform == "darwin":
-            self.installer = MacInstaller()
-        else:
-            self.installer = LinuxInstaller()
+        self.installer = MacInstaller() if sys.platform == "darwin" else LinuxInstaller()
 
     def ensure_database(self, database_name):
         if prompt_for("Would you like to change your postgres password for user postgres?", implicit_yes=False):
-            print("Please enter the new password")
-            database_password = input()
+            database_password = valid_input_for(query="Please enter the new password: ")
             self.run_command(["sudo", "-u", "postgres", "psql", "-c", "\"ALTER USER postgres PASSWORD '%s';\"" % database_password])
         else:
-            print("Please enter the password")
-            database_password = input()
+            database_password = valid_input_for(query="Please enter the password: ")
 
         connection_settings = {
             "database": "postgres",
@@ -50,11 +44,8 @@ class SetupStemAppCommand(BaseStemAppCommand):
         database_cursor.execute("GRANT ALL PRIVILEGES ON DATABASE " + database_name + " TO postgres;")
 
         if prompt_for("Would you like to import a database?", implicit_yes=False):
-            print("Please enter the path to the file")
-            file_path = input()
-            while not os.path.isfile(file_path) or not file_path.endswith(".sql"):
-                print("Invalid file path or file type, please try again..")
-                file_path = input()
+            file_path = valid_input_for(query="Please enter the path to the file: ",
+                                            is_valid=lambda x: os.path.isfile(x) and x.endswith(".sql"))
             self.run_command(["sudo", "-u", "postgres", "psql", database_name, "<", file_path])
         else:
             self.run_command(["python3", "manage.py", "migrate"])
@@ -94,7 +85,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def install_requirements(self):
         self.installer.install_postgresql()
 
-        required_packages = ["curl", "redis-server", "git"]
+        required_packages = ["curl", "redis-server", "git", "python3", "python"]
         packages_to_be_installed = []
 
         for package in required_packages:

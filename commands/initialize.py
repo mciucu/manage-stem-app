@@ -1,6 +1,6 @@
 import os, subprocess, json
 
-from commands.base import BaseStemAppCommand, generate_random_key, prompt_for
+from commands.base import BaseStemAppCommand, generate_random_key, prompt_for, valid_input_for
 
 
 def render_template(path_from, path_to, context, verbosity=2):
@@ -76,13 +76,8 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         
         if not prompt_for("Would you like to publish the project to github?", implicit_yes=True):
             return
-        
-        print("Enter your github profile: ", end="")
-        while True:
-            github_name = input()
-            if github_name != "":
-                break
 
+        github_name = valid_input_for("Enter your github profile: ")
         github_link = "https://github.com/" + github_name + "/" + project_settings["name"]
 
         try: 
