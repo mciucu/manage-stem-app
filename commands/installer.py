@@ -37,8 +37,8 @@ class Installer(ABC):
 
         version_output = subprocess.Popen(["nodejs", "--version"], stdout=subprocess.PIPE).stdout
         line = next(line for line in version_output)
-        version = int(line[1:-1].replace(".", ""))
-        return True if version < 800 else False
+        version = line[1:-1].decode().split(".")
+        return len(version) == 0 or int(version[0]) < 8
 
     def install_packages(self, *packages):
         self.update_package_manager()
@@ -65,7 +65,8 @@ class LinuxInstaller(Installer):
 
     def install_nodejs(self):
         if self.should_install_nodejs():
-            self.run_command(["curl", "-sL", "https://deb.nodesource.com/setup_8.x"])
+            # doesn't work in this current state
+            self.run_command(["curl", "-fsSL", "https://deb.nodesource.com/setup_8.x", "|", "sudo", "-E", "bash", "-"])
             self.have_updated_package_manager = False
             self.install_packages(["nodejs"])
 
@@ -88,3 +89,7 @@ class MacInstaller(Installer):
     def install_nodejs(self):
         if self.should_install_nodejs():
             self.install_packages(["nodejs"])
+
+    def install_pip(self):
+        if not self.is_installed("pip3"):
+            raise ValueError("Could not locate pip3, please install it manually!")

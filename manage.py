@@ -8,8 +8,6 @@ from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
 from commands.run import RunStemAppCommand
 
-global_npm_requirements = ['babel-cli', 'rollup']
-
 licenses = ['', 'a', 'b', 'c']
 
 

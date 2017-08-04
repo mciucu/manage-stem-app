@@ -1,9 +1,10 @@
-import psycopg2
 import sys
 from commands.base import *
 from commands.initialize import render_template
 from commands.build import BuildStemAppCommand
-from commands.installer import LinuxInstaller, MacInstaller
+
+SETUP_NPM_REQUIREMENTS = ["babel-cli", "rollup"]
+SETUP_REQUIREMENTS = ["redis-server"]
 
 
 class SetupStemAppCommand(BaseStemAppCommand):
@@ -13,9 +14,11 @@ class SetupStemAppCommand(BaseStemAppCommand):
         self.get_package_installer()
 
     def ensure_database(self, database_name):
+        import psycopg2
+
         if prompt_for("Would you like to change your postgres password for user postgres?", implicit_yes=False):
             database_password = valid_input_for(query="Please enter the new password: ")
-            self.run_command(["sudo", "-u", "postgres", "psql", "-c", "\"ALTER USER postgres PASSWORD '%s';\"" % database_password])
+            self.run_command(["sudo", "-u", "postgres", "psql", "-c", "ALTER USER postgres WITH PASSWORD '%s';" % database_password])
         else:
             database_password = valid_input_for(query="Please enter the password: ")
 
@@ -58,7 +61,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
         self.install_requirements()
 
         project_name = self.settings.get("project", "name")
-        database_name = project_name
+        database_name = project_name.lower()
 
         context = {
             "secret_key": generate_random_key(length=58),
@@ -85,17 +88,9 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def install_requirements(self):
         self.installer.install_postgresql()
 
-        required_packages = ["curl", "redis-server", "git", "python3", "python"]
-        packages_to_be_installed = []
-
-        for package in required_packages:
-            if not self.installer.is_installed(package):
-                packages_to_be_installed.append(package)
-
-        self.installer.install_packages(packages_to_be_installed)
+        self.installer.ensure_packages_installed(SETUP_REQUIREMENTS)
         self.installer.install_nodejs()
 
-        self.run_command(["npm", "install", "-g", "babel-cli", "rollup"])
+        self.run_command(["npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
         self.run_command(["npm", "install"])
-        self.installer.install_pip()
         self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])

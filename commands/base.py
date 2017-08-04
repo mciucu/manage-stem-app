@@ -6,6 +6,7 @@ import sys
 
 from commands.installer import MacInstaller, LinuxInstaller
 from .settings import StemAppSettings
+from sys import platform
 
 
 def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"):
@@ -36,6 +37,7 @@ def valid_input_for(query, on_fail="Please try again: ", is_valid=lambda x: x !=
         if is_valid(x):
             break
         message = on_fail
+    return x
 
 
 def is_sudo():
@@ -53,7 +55,7 @@ class BaseStemAppCommand(object):
         self.installer = MacInstaller() if sys.platform == "darwin" else LinuxInstaller()
 
         return self.installer
-    
+
     def load_settings(self):
         self.settings = StemAppSettings(self.path)
 

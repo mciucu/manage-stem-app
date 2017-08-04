@@ -1,6 +1,8 @@
 import os, subprocess, json
+from commands.base import *
 
-from commands.base import BaseStemAppCommand, generate_random_key, prompt_for, valid_input_for
+INITIAL_REQUIREMENTS = ["curl", "python", "python3", "git"]
+INITIAL_PIP3_REQUIREMENTS = ["jinja2", "psycopg2"]
 
 
 def render_template(path_from, path_to, context, verbosity=2):
@@ -50,6 +52,7 @@ def render_template(path_from, path_to, context, verbosity=2):
 
 class InitializeStemAppCommand(BaseStemAppCommand):
     def init_from_template(self, context):
+
         template_dir = self.get_manager_resource("project_template")
 
         project_name = context["project_name"]
@@ -130,7 +133,16 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         print("Final Step. Pushing your project to\t" + github_link)
         self.run_command(["git", "push", "-u", "origin", "master"])
 
+    def ensure_packages(self):
+        self.get_package_installer().ensure_packages_installed(INITIAL_REQUIREMENTS)
+        self.installer.install_pip()
+        self.run_command(["pip3", "install", "--upgrade", "-r"] + INITIAL_PIP3_REQUIREMENTS)
+
     def run(self):
+        if not is_sudo():
+            raise ValueError("Please re-run with administrator rights!")
+
+        self.ensure_packages()
         project_settings = self.settings.get("project")
 
         self.get_package_installer().ensure_packages_installed("git", "curl")
@@ -159,7 +171,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
             "allowed_hosts": '"*"',
             "secret_key": generate_random_key(),
             "establishment_apps": ",\n    ".join(establishment_apps),
-            "project_apps": '"' + project_settings["name"] + "app" + '"',
+            "project_apps": '"' + project_settings["name"] + "app" + '"'
         }
 
         self.init_from_template(context)
