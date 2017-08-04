@@ -140,7 +140,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
     def run(self):
         if not is_sudo():
-            raise ValueError("Please re-run with administrator rights!")
+            sys.exit("Please re-run with administrator rights!")
 
         self.ensure_packages()
         project_settings = self.settings.get("project")

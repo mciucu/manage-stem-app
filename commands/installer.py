@@ -1,6 +1,6 @@
 import subprocess
 from abc import ABC, abstractmethod
-
+from sys import exit
 
 class Installer(ABC):
     PACKAGE_MANAGER_INSTALL_OPTIONS = ["install"]
@@ -92,4 +92,4 @@ class MacInstaller(Installer):
 
     def install_pip(self):
         if not self.is_installed("pip3"):
-            raise ValueError("Could not locate pip3, please install it manually!")
+            exit("Could not locate pip3, please install it manually!")
