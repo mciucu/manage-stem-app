@@ -1,6 +1,11 @@
 import subprocess
+import urllib.request
 from abc import ABC, abstractmethod
 from sys import exit
+from os import remove
+from commands.base import prompt_for
+
+REQUIRED_NODEJS_VERSION = 6
 
 class Installer(ABC):
     PACKAGE_MANAGER_INSTALL_OPTIONS = ["install"]
@@ -38,7 +43,7 @@ class Installer(ABC):
         version_output = subprocess.Popen(["nodejs", "--version"], stdout=subprocess.PIPE).stdout
         line = next(line for line in version_output)
         version = line[1:-1].decode().split(".")
-        return len(version) == 0 or int(version[0]) < 8
+        return len(version) == 0 or int(version[0]) < REQUIRED_NODEJS_VERSION
 
     def install_packages(self, *packages):
         self.update_package_manager()
@@ -65,8 +70,11 @@ class LinuxInstaller(Installer):
 
     def install_nodejs(self):
         if self.should_install_nodejs():
-            # doesn't work in this current state
-            self.run_command(["curl", "-fsSL", "https://deb.nodesource.com/setup_8.x", "|", "sudo", "-E", "bash", "-"])
+            # TODO: Perhaps there is a better way of doing this
+            temp_nodejs_file = "stem-app-nodejs-helper.sh"
+            urllib.request.urlretrieve("https://deb.nodesource.com/setup_8.x", temp_nodejs_file)
+            subprocess.check_call(temp_nodejs_file, shell=True)
+            remove(temp_nodejs_file)
             self.have_updated_package_manager = False
             self.install_packages(["nodejs"])
 
@@ -79,8 +87,10 @@ class MacInstaller(Installer):
 
     def ensure_package_manager_is_installed(self):
         if not self.is_installed(self.PACKAGE_MANAGER):
-            # TODO: should ask permission here to install brew
-            self.run_command(["curl", "-fsSL", "https://raw.githubusercontent.com/Homebrew/install/master/install"])
+            if prompt_for("Homebrew will be installed at this step. Would like like to continue?"):
+                self.run_command(["curl", "-fsSL", "https://raw.githubusercontent.com/Homebrew/install/master/install"])
+            else:
+                exit()
 
     def install_postgresql(self):
         if not self.is_installed("psql"):

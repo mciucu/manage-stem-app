@@ -145,8 +145,6 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         self.ensure_packages()
         project_settings = self.settings.get("project")
 
-        self.get_package_installer().ensure_packages_installed("git", "curl")
-
         establishment_apps = map(lambda app_name: '"establishment.' + app_name + '"', [
             "accounts",
             "socialaccount",
