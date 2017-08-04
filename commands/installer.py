@@ -80,5 +80,5 @@ class MacInstaller(Installer):
             self.install_packages(["postgresql"])
 
     def install_nodejs(self):
-        if not self.should_install_nodejs()
+        if self.should_install_nodejs()
             self.install_packages(["nodejs"])
