@@ -7,7 +7,7 @@ class Installer(ABC):
     PACKAGE_MANAGER_UPDATE_OPTIONS = ["update"]
 
     def __init__(self):
-        self.ensure_package_manager()
+        self.ensure_package_manager_is_installed()
         self.have_updated_package_manager = False
         super().__init__()
 
@@ -25,7 +25,7 @@ class Installer(ABC):
     def install_postgresql(self):
         pass
 
-    def ensure_package_manager(self):
+    def ensure_package_manager_is_installed(self):
         pass
 
     def install_pip(self):
@@ -43,6 +43,11 @@ class Installer(ABC):
     def install_packages(self, *packages):
         self.update_package_manager()
         self.run_command([self.PACKAGE_MANAGER] + self.PACKAGE_MANAGER_INSTALL_OPTIONS + list(*packages))
+
+    def ensure_packages_installed(self, *packages):
+        packages_to_install = [package for package in packages if not self.is_installed(package)]
+        if len(packages_to_install) > 0:
+            self.install_packages(*packages)
 
     def update_package_manager(self):
         if not self.have_updated_package_manager:
@@ -71,8 +76,9 @@ class LinuxInstaller(Installer):
 class MacInstaller(Installer):
     PACKAGE_MANAGER = "brew"
 
-    def ensure_package_manager(self):
+    def ensure_package_manager_is_installed(self):
         if not self.is_installed(self.PACKAGE_MANAGER):
+            # TODO: should ask permission here to install brew
             self.run_command(["curl", "-fsSL", "https://raw.githubusercontent.com/Homebrew/install/master/install"])
 
     def install_postgresql(self):

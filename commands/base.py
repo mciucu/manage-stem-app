@@ -1,6 +1,10 @@
 import os
 import subprocess
 import random
+
+import sys
+
+from commands.installer import MacInstaller, LinuxInstaller
 from .settings import StemAppSettings
 
 
@@ -40,6 +44,15 @@ def is_sudo():
 
 class BaseStemAppCommand(object):
     settings = None
+    installer = None
+
+    def get_package_installer(self):
+        if self.installer:
+            return self.installer
+
+        self.installer = MacInstaller() if sys.platform == "darwin" else LinuxInstaller()
+
+        return self.installer
     
     def load_settings(self):
         self.settings = StemAppSettings(self.path)

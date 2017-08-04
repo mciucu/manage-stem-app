@@ -10,7 +10,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def __init__(self, setup_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setup_type = setup_type
-        self.installer = MacInstaller() if sys.platform == "darwin" else LinuxInstaller()
+        self.get_package_installer()
 
     def ensure_database(self, database_name):
         if prompt_for("Would you like to change your postgres password for user postgres?", implicit_yes=False):
