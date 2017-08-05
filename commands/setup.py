@@ -2,6 +2,7 @@ import sys
 from commands.base import *
 from commands.initialize import render_template
 from commands.build import BuildStemAppCommand
+from commands.utils import is_sudo, prompt_for, valid_input_for, generate_random_key
 
 SETUP_NPM_REQUIREMENTS = ["babel-cli", "rollup"]
 SETUP_REQUIREMENTS = ["redis-server"]
@@ -64,7 +65,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
         database_name = project_name.lower()
 
         context = {
-            "secret_key": generate_random_key(length=58),
+            "secret_key": generate_random_key(),
             "database_name": database_name
         }
 
@@ -88,7 +89,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def install_requirements(self):
         self.installer.install_postgresql()
 
-        self.installer.ensure_packages_installed(SETUP_REQUIREMENTS)
+        self.installer.ensure_packages_installed(*SETUP_REQUIREMENTS)
         self.installer.install_nodejs()
 
         self.run_command(["npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)

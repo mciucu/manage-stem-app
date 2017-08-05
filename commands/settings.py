@@ -70,6 +70,16 @@ class SettingsFileManager(object):
 
         return current_value
 
+    def has(self, *args):
+        current_dict = self.settings
+        for arg in args:
+            arg = to_camel_case(arg)
+            if not arg in current_dict:
+                return False
+            current_dict = current_dict[arg]
+
+        return True
+
     def set(self, *args):
         current_dict = self.settings
 

@@ -1,6 +1,3 @@
-import os
-import subprocess
-
 import sys
 
 from commands.base import BaseStemAppCommand

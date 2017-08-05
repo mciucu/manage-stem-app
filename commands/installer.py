@@ -3,9 +3,10 @@ import urllib.request
 from abc import ABC, abstractmethod
 from sys import exit
 from os import remove
-from commands.base import prompt_for
+from commands.utils import prompt_for
 
 REQUIRED_NODEJS_VERSION = 6
+
 
 class Installer(ABC):
     PACKAGE_MANAGER_INSTALL_OPTIONS = ["install"]
@@ -36,7 +37,7 @@ class Installer(ABC):
     def install_pip(self):
         pass
 
-    def should_install_node(self):
+    def should_install_nodejs(self):
         if not self.is_installed("nodejs"):
             return True
 

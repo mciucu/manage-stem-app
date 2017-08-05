@@ -1,5 +1,6 @@
-import os, subprocess, json
+import json
 from commands.base import *
+from commands.utils import prompt_for, valid_input_for, is_sudo, generate_random_key
 
 INITIAL_REQUIREMENTS = ["curl", "python", "python3", "git"]
 INITIAL_PIP3_REQUIREMENTS = ["jinja2", "psycopg2"]
@@ -76,12 +77,17 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
     def publish_to_github(self):
         project_settings = self.settings.get("project")
-        
+        source_control_settings = dict()
+
         if not prompt_for("Would you like to publish the project to github?", implicit_yes=True):
+            self.settings.set("sourceControl", source_control_settings)
             return
 
         github_name = valid_input_for("Enter your github profile: ")
         github_link = "https://github.com/" + github_name + "/" + project_settings["name"]
+
+        source_control_settings["type"] = "git"
+        source_control_settings["link"] = github_link
 
         try: 
             self.run_command(["git", "init"])
@@ -90,7 +96,6 @@ class InitializeStemAppCommand(BaseStemAppCommand):
             self.run_command(["git", "remote", "add", "origin", github_link])
         except:
             pass
-        
 
         # Create the repository
         while 1:
@@ -130,13 +135,15 @@ class InitializeStemAppCommand(BaseStemAppCommand):
                     print("Reason:\t", response["message"])
                     return
 
-        print("Final Step. Pushing your project to\t" + github_link)
+        self.settings.set("sourceControl", source_control_settings)
+
+        print("Making the initial commit\t" + github_link)
         self.run_command(["git", "push", "-u", "origin", "master"])
 
     def ensure_packages(self):
-        self.get_package_installer().ensure_packages_installed(INITIAL_REQUIREMENTS)
+        self.get_package_installer().ensure_packages_installed(*INITIAL_REQUIREMENTS)
         self.installer.install_pip()
-        self.run_command(["pip3", "install", "--upgrade", "-r"] + INITIAL_PIP3_REQUIREMENTS)
+        self.run_command(["pip3", "install", "--upgrade"] + INITIAL_PIP3_REQUIREMENTS)
 
     def run(self):
         if not is_sudo():
@@ -176,5 +183,6 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
         if not os.path.exists(os.path.join(self.get_project_root(), "establishment")):
             self.run_command(["git", "clone", "https://github.com/establishment/django-establishment", "establishment"])
-        
-        self.publish_to_github()        
+
+        if not self.settings.has("sourceControl"):
+            self.publish_to_github()
