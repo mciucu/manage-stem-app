@@ -8,9 +8,6 @@ from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
 from commands.run import RunStemAppCommand
 
-licenses = ['', 'a', 'b', 'c']
-
-
 def colorize(text):
     if not isinstance(text, str):
         # If it's not a string, should be iterable
@@ -44,21 +41,18 @@ def main():
 
     if args.create:
         CreateStemAppCommand().run()
-
-    if args.init:
+    elif args.init:
         InitializeStemAppCommand().run()
-
-    if args.setup:
+    elif args.setup:
         SetupStemAppCommand(args.setup).run()
-
-    if args.build:
+    elif args.build:
         BuildStemAppCommand(watch=False).run()
-
-    if args.watch:
+    elif args.watch:
         BuildStemAppCommand(watch=True).run()
-
-    if args.run:
+    elif args.run:
         RunStemAppCommand().run()
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

@@ -52,6 +52,11 @@ def render_template(path_from, path_to, context, verbosity=2):
 
 
 class InitializeStemAppCommand(BaseStemAppCommand):
+    def update_from_settings_file(self, filename):
+        template_settings = StemAppSettings(filename)
+        for key in template_settings.settings:
+            self.settings.set(key, template_settings.settings[key])
+
     def init_from_template(self, context):
 
         template_dir = self.get_manager_resource("project_template")
@@ -62,18 +67,14 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         for root, dirs, files in os.walk(template_dir):
             for file in files:
                 template_file = os.path.join(root, file)
-                # TODO: Check if file is stemapp.json, and if so, add to setting with deep copy
+                if template_file == os.path.join(template_dir, "stemapp.json"):
+                    self.update_from_settings_file(template_file)
+                    continue
                 template_file_relative = os.path.relpath(template_file, template_dir)
                 dest_file = os.path.join(self.get_project_root(), template_file_relative)
                 dest_file = dest_file.replace("project_name", project_name)
                 dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
                 render_template(template_file, dest_file, context)
-
-        # TODO: this should be a deep copy from the stemapp.json file in the template
-        self.settings.set("build", {
-            "type": "rollup",
-            "configPath": project_main_app + "/js/",
-        })
 
     def publish_to_github(self):
         project_settings = self.settings.get("project")

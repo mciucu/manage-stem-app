@@ -1,0 +1,6 @@
+{
+  "build": {
+    "type": "rollup",
+    "configPath": "{{project_main_app}}/js"
+  }
+}
