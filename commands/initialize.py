@@ -57,7 +57,7 @@ def render_template(path_from, path_to, context, verbosity=2):
 
 class InitializeStemAppCommand(BaseStemAppCommand):
     def update_from_settings_file(self, filename):
-        template_settings = StemAppSettings(filename)
+        template_settings = SettingsFileManager(filename)
         for key in template_settings.settings:
             self.settings.set(key, template_settings.settings[key])
 

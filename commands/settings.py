@@ -100,8 +100,3 @@ class SettingsFileManager(object):
         # TODO: should probably create a temporary file, and only then move it instead of the current settings file
         with open(file_name, mode="w") as settings_file:
             json.dump(self.settings, settings_file, indent=2, sort_keys=True)
-
-
-class StemAppSettings(SettingsFileManager):
-    def __init__(self, file_name="stemapp.json", extra=None, die_on_missing=True):
-        super().__init__(file_name, extra, die_on_missing)

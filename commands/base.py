@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 from commands.installer import MacInstaller, LinuxInstaller
-from .settings import StemAppSettings
+from .settings import SettingsFileManager
 
 
 class BaseStemAppCommand(object):
@@ -20,7 +20,7 @@ class BaseStemAppCommand(object):
         return self.installer
 
     def load_settings(self):
-        self.settings = StemAppSettings(self.get_setting_file_path())
+        self.settings = SettingsFileManager(self.get_setting_file_path())
 
     def __init__(self, *args, **kwargs):
         self.path = kwargs.get("path", ".")
