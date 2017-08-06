@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 import establishment.chat.views
@@ -35,3 +36,16 @@ urlpatterns = [
     # Your own urls
     url(r"^", include("{{project_main_app}}.urls")),
 ]
+
+if settings.DEBUG:
+    # Alter the function that serves static files, to wait for bundling to be ready
+
+    from django.views import static as static_view
+
+    old_staticfiles_serve = static_view.serve
+
+    def static_serve(request, static_path, document_root=None, **kwargs):
+        print("Going to serve a static file:", static_path, document_root, kwargs)
+        return old_staticfiles_serve(request, static_path, document_root=document_root, **kwargs)
+
+    static_view.serve = static_serve
