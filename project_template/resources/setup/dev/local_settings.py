@@ -15,7 +15,11 @@ DATABASES = {
 
 DEFAULT_HTTP_PROTOCOL = "http"
 
-WSGI_APPLICATION = 'establishment.websockredis.django_runserver.application'
+WSGI_APPLICATION = "establishment.websockredis.django_runserver.application"
+
+STATIC_FILE_WATCHERS = [
+    ("establishment.misc.static_serve_patch.RollupFileServer", None),
+]
 
 WEBSOCKET_HEARTBEAT_INTERVAL = 30
 WEBSOCKET_HEARTBEAT = "--hrtbeet--"
