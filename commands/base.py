@@ -20,7 +20,7 @@ class BaseStemAppCommand(object):
         return self.installer
 
     def load_settings(self):
-        self.settings = StemAppSettings(self.path)
+        self.settings = StemAppSettings(self.get_setting_file_path())
 
     def __init__(self, *args, **kwargs):
         self.path = kwargs.get("path", ".")
@@ -36,6 +36,9 @@ class BaseStemAppCommand(object):
 
     def get_project_root(self):
         return self.path
+
+    def get_setting_file_path(self):
+        return os.path.join(self.get_project_root(), "stemapp.json")
 
     def get_project_path(self, *paths):
         return os.path.join(self.get_project_root(), *paths)

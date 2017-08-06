@@ -6,24 +6,11 @@ INITIAL_REQUIREMENTS = ["curl", "python", "python3", "git"]
 INITIAL_PIP3_REQUIREMENTS = ["jinja2", "psycopg2"]
 
 
-def render_template(path_from, path_to, context, verbosity=2):
+def render_template_to_string(filename, context, output_is_template=False):
     import jinja2
     import uuid
 
-    output_is_template = False
-
-    path_to_without_extension, path_to_extension = os.path.splitext(path_to)
-
-    if path_to_extension == ".noextension":
-        path_to = path_to_without_extension
-    elif path_to_extension == ".template":
-        path_to = path_to_without_extension
-        output_is_template = True
-
-    if verbosity >= 2:
-        print("Rendering", path_from, "->", path_to)
-
-    with open(path_from, "r") as content_file:
+    with open(filename, "r") as content_file:
         template_content = content_file.read()
 
     if output_is_template:
@@ -44,11 +31,28 @@ def render_template(path_from, path_to, context, verbosity=2):
         template_content = template_content.replace(unique_string, "}}")
 
     # Actually render the template
-    template_content = jinja2.Environment().from_string(template_content).render(context)
+    return jinja2.Environment().from_string(template_content).render(context)
+
+
+def render_template(path_from, path_to, context, verbosity=2):
+    output_is_template = False
+
+    path_to_without_extension, path_to_extension = os.path.splitext(path_to)
+
+    if path_to_extension == ".noextension":
+        path_to = path_to_without_extension
+    elif path_to_extension == ".template":
+        path_to = path_to_without_extension
+        output_is_template = True
+
+    if verbosity >= 2:
+        print("Rendering", path_from, "->", path_to)
+
+    output_content = render_template_to_string(path_from, context, output_is_template)
 
     os.makedirs(os.path.dirname(path_to), exist_ok=True)
     with open(path_to, "w") as rendered_file:
-        rendered_file.write(template_content)
+        rendered_file.write(output_content)
 
 
 class InitializeStemAppCommand(BaseStemAppCommand):
@@ -67,9 +71,14 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         for root, dirs, files in os.walk(template_dir):
             for file in files:
                 template_file = os.path.join(root, file)
+
                 if template_file == os.path.join(template_dir, "stemapp.json"):
-                    self.update_from_settings_file(template_file)
+                    # Do a shallow copy of settings from the stemapp.json file
+                    settings_str = render_template_to_string(template_file, context)
+                    settings_dict = json.loads(settings_str)
+                    self.settings.update(settings_dict, True)
                     continue
+
                 template_file_relative = os.path.relpath(template_file, template_dir)
                 dest_file = os.path.join(self.get_project_root(), template_file_relative)
                 dest_file = dest_file.replace("project_name", project_name)
@@ -78,7 +87,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
     def publish_to_github(self):
         project_settings = self.settings.get("project")
-        source_control_settings = dict()
+        source_control_settings = {}
 
         if not prompt_for("Would you like to publish the project to github?", implicit_yes=True):
             self.settings.set("sourceControl", source_control_settings)
@@ -90,16 +99,13 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         source_control_settings["type"] = "git"
         source_control_settings["link"] = github_link
 
-        try: 
-            self.run_command(["git", "init"])
-            self.run_command(["git", "add", "."])
-            self.run_command(["git", "commit", "-m", "\"Initial Commit\""])
-            self.run_command(["git", "remote", "add", "origin", github_link])
-        except:
-            pass
+        self.run_command(["git", "init"])
+        self.run_command(["git", "add", "."])
+        self.run_command(["git", "commit", "-m", "\"Initial Commit\""])
+        self.run_command(["git", "remote", "add", "origin", github_link])
 
         # Create the repository
-        while 1:
+        while True:
             # read more about github's request optins here: https://developer.github.com/v3/repos/#input
             github_request = {
                     "name": project_settings["name"],

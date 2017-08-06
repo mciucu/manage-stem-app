@@ -41,9 +41,6 @@ def to_underscore_case(txt):
 
 class SettingsFileManager(object):
     def __init__(self, file_name, extra=None, die_on_missing=True):
-        if os.path.isdir(file_name):
-            file_name = os.path.join(file_name, "stemapp.json")
-
         self.file_name = file_name
 
         if os.path.isfile(self.file_name):
@@ -52,13 +49,17 @@ class SettingsFileManager(object):
         else:
             if die_on_missing:
                 sys.exit("Missing settings file: ", file_name)
+            self.settings = dict()
 
         if extra:
-            # TODO: do a deep copy here, also changing the case
-            self.settings = extra
+            self.update(extra, False)
 
-        if not hasattr(self, "settings"):
-            self.settings = dict()
+    def update(self, d, with_save):
+        # Not a deep copy, for now
+        for key in d:
+            self.settings[key] = d[key]
+        if with_save:
+            self.save()
 
     def get(self, *args, default=None):
         current_value = self.settings
