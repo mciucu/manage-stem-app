@@ -43,11 +43,34 @@ class BaseStemAppCommand(object):
     def get_project_path(self, *paths):
         return os.path.join(self.get_project_root(), *paths)
 
-    def run_command(self, command, path=""):
+    def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=True, merge_stderr_to_stdout=False, raise_exception=True):
+        stdout = None
+        if pipe_stdout:
+            stdout = subprocess.PIPE
+
+        stderr = None
+        if merge_stderr_to_stdout:
+            stderr= subprocess.STDOUT
+        else:
+            if pipe_stderr:
+                stderr = subprocess.PIPE
+
         path = os.path.join(self.get_project_root(), path)
-        if not isinstance(command, list):
-            command = list(command)
-        return subprocess.check_call(command, cwd=path)
+        if isinstance(command, list):
+            str_command = ""
+            for comm in command:
+                str_command += comm + " "
+            command = str_command
+
+        call = subprocess.Popen(command, cwd=path, stdout=stdout, stderr=stderr, shell=True)
+        out, err = call.communicate()
+        returncode = call.returncode
+
+        if returncode and raise_exception:
+            err = err.decode("ascii", errors="ignore")
+            raise Exception("Failed to run: ", command, '\n', err)
+
+        return (out, err, returncode)
 
     def run(self):
         raise NotImplementedError("Implement run()")
