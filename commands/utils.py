@@ -36,3 +36,9 @@ def valid_input_for(query, on_fail="Please try again: ", is_valid=lambda x: x !=
 
 def is_sudo():
     return os.getuid() == 0
+
+
+def get_setting_from_console(message):
+    print(message)
+    return input()
+
