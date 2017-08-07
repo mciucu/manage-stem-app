@@ -8,10 +8,8 @@ class RunStemAppCommand(BaseStemAppCommand):
         super().__init__(*args, **kwargs)
 
     def run(self):
-        rollup_proc = Process(target=BuildStemAppCommand(watch=False).run())
+        rollup_proc = Process(target=BuildStemAppCommand(watch=True).run)
         rollup_proc.start()
 
         django_proc = Process(target=self.run_command(["python3", "manage.py", "runserver"]))
         django_proc.start()
-
-
