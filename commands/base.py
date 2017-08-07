@@ -38,7 +38,7 @@ class BaseStemAppCommand(object):
         return self.path
 
     def get_setting_file_path(self):
-        return os.path.join(self.get_project_root(), "stemapp.json")
+        return os.path.join(self.get_project_root(), "stem.json")
 
     def get_project_path(self, *paths):
         return os.path.join(self.get_project_root(), *paths)

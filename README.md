@@ -6,6 +6,6 @@ You can read more about it on the [documentation page](https://stemjs.org/docs/s
 #### Basic usage
 
 ```bash
-npm install -g manage-stem-app
-stem-app create app-name
+npm install -g stem-app
+stem --create app-name
 ```

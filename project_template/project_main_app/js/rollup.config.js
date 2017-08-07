@@ -7,10 +7,10 @@ var path = require('path');
 
 var rootDir = __dirname;
 
-while (!fs.existsSync(rootDir + "/stemapp.json")) {
+while (!fs.existsSync(rootDir + "/stem.json")) {
     rootDir = path.dirname(rootDir);
     if (rootDir === path.dirname(rootDir)) {
-        exit("Can't find stemapp.json in the path tree.");
+        exit("Can't find stem.json in the path tree.");
     }
 }
 

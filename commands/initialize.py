@@ -72,8 +72,8 @@ class InitializeStemAppCommand(BaseStemAppCommand):
             for file in files:
                 template_file = os.path.join(root, file)
 
-                if template_file == os.path.join(template_dir, "stemapp.json"):
-                    # Do a shallow copy of settings from the stemapp.json file
+                if template_file == os.path.join(template_dir, "stem.json"):
+                    # Do a shallow copy of settings from the stem.json file
                     settings_str = render_template_to_string(template_file, context)
                     settings_dict = json.loads(settings_str)
                     self.settings.update(settings_dict, True)

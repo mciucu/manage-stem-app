@@ -10,7 +10,7 @@ class CreateStemAppCommand(BaseStemAppCommand):
     LICENSES = []
 
     def load_settings(self):
-        self.settings = SettingsFileManager(extra={}, die_on_missing=False)
+        self.settings = SettingsFileManager(self.get_setting_file_path(), extra={}, die_on_missing=False)
 
     def is_valid_license(self, app_license):
         return app_license in self.LICENSES

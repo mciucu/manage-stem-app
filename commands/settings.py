@@ -40,7 +40,7 @@ def to_underscore_case(txt):
 
 
 class SettingsFileManager(object):
-    def __init__(self, file_name="stemapp.json", extra=None, die_on_missing=True):
+    def __init__(self, file_name, extra=None, die_on_missing=True):
         self.file_name = file_name
 
         if os.path.isfile(self.file_name):

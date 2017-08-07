@@ -21,21 +21,21 @@ def main():
     parser = argparse.ArgumentParser(description="Stem App creation and management helper")
 
     action_type = parser.add_mutually_exclusive_group()
-    action_type.add_argument("-c", "--create", help="Create a new Stem app", action="store_true")
-    action_type.add_argument("--init", help="Initialize a Stem app from a stemapp.json", action="store_true")
-    action_type.add_argument("-s", "--setup",
+    action_type.add_argument("--create", help="Create a new Stem app", action="store")
+    action_type.add_argument("--init", help="Initialize a Stem app from a stem.json", action="store_true")
+    action_type.add_argument("--setup",
                              help="Configure a newly clones app",
                              action="store",
                              choices=["production", "dev"])
-    action_type.add_argument("-u", "--upgrade", help="Update the project to the latest stem and establishment version",
+    action_type.add_argument("--upgrade", help="Update the project to the latest stem and establishment version",
                              action="store",
                              choices=["app", "establishment", "stem", "npm"])
     action_type.add_argument("-b", "--build", help="Build the current project", action="store_true")
     action_type.add_argument("-w", "--watch", help="Build the project and watch for changes", action="store_true")
     action_type.add_argument("-r", "--run", help="Ensure the project is built in the background and run it", action="store_true")
     action_type.add_argument("--seticon", help="Set a favicon to be used by the website", action="store")
-    action_type.add_argument("-d", "--deploy", help="Deploy the source code to a remote server", action="store")
-    action_type.add_argument("-v", "--version", help="Display the helper version", action="version", version="Stem App Manager 0.1.0")
+    action_type.add_argument("--deploy", help="Deploy the source code to a remote server", action="store")
+    action_type.add_argument("--version", help="Display the helper version", action="version", version="Stem App Manager 0.1.0")
 
     args = parser.parse_args()
 
