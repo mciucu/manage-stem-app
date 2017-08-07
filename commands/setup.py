@@ -1,7 +1,7 @@
 import sys
 from .base import *
 from .build import BuildStemAppCommand
-from .utils import is_sudo, prompt_for, valid_input_for, generate_random_key, render_template
+from .utils import require_sudo, prompt_for, valid_input_for, generate_random_key, render_template
 
 SETUP_NPM_REQUIREMENTS = ["babel-cli", "rollup"]
 SETUP_REQUIREMENTS = ["redis-server"]
@@ -55,8 +55,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
         database_connection.close()
 
     def run(self):
-        if not is_sudo():
-            sys.exit("Please re-run with administrator rights!")
+        require_sudo()
 
         self.install_requirements()
 

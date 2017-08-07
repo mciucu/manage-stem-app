@@ -1,6 +1,6 @@
 import json
 from .base import *
-from .utils import prompt_for, valid_input_for, is_sudo, generate_random_key, render_template, render_template_to_string
+from .utils import prompt_for, valid_input_for, require_sudo, generate_random_key, render_template, render_template_to_string
 from .setup import SetupStemAppCommand
 
 INITIAL_REQUIREMENTS = ["curl", "python", "python3", "git"]
@@ -43,14 +43,8 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         self.run_command(["pip3", "install", "--upgrade"] + INITIAL_PIP3_REQUIREMENTS)
 
     def run(self):
-        print('nope')
-        print('nope')
-        print('nope')
-        if not is_sudo():
-            print('nope')
-            sys.exit("Please re-run with administrator rights!")
+        require_sudo()
 
-        print('nope2')
         self.ensure_packages()
         project_settings = self.settings.get("project")
 
