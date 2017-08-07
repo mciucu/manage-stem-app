@@ -80,7 +80,8 @@ class LinuxInstaller(Installer):
             self.install_packages(["nodejs"])
 
     def install_pip(self):
-        self.run_command(["easy_install3", "pip"])
+        if not self.is_installed("pip3"):
+            self.run_command(["easy_install3", "pip"])
 
 
 class MacInstaller(Installer):
@@ -104,3 +105,4 @@ class MacInstaller(Installer):
     def install_pip(self):
         if not self.is_installed("pip3"):
             exit("Could not locate pip3, please install it manually!")
+
