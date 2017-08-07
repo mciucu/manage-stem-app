@@ -21,10 +21,13 @@ def main():
     parser = argparse.ArgumentParser(description="Stem App creation and management helper")
 
     action_type = parser.add_mutually_exclusive_group()
-    action_type.add_argument("--create", help="Create a new Stem app", action="store")
+    action_type.add_argument("--create", help="Create a new Stem app",
+                             const="",
+                             type=str,
+                             nargs="?")
     action_type.add_argument("--init", help="Initialize a Stem app from a stem.json", action="store_true")
     action_type.add_argument("--setup",
-                             help="Configure a newly clones app",
+                             help="Configure a newly cloned app",
                              action="store",
                              choices=["production", "dev"])
     action_type.add_argument("--upgrade", help="Update the project to the latest stem and establishment version",
@@ -39,8 +42,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.create:
-        CreateStemAppCommand().run()
+    if args.create is not None:
+        CreateStemAppCommand(args.create).run()
     elif args.init:
         InitializeStemAppCommand().run()
     elif args.setup:
