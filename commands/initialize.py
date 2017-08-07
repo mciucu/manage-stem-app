@@ -37,68 +37,6 @@ class InitializeStemAppCommand(BaseStemAppCommand):
                 dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
                 render_template(template_file, dest_file, context)
 
-    def publish_to_github(self):
-        project_settings = self.settings.get("project")
-        source_control_settings = {}
-
-        if not prompt_for("Would you like to publish the project to github?", implicit_yes=True):
-            self.settings.set("sourceControl", source_control_settings)
-            return
-
-        github_name = valid_input_for("Enter your github profile: ")
-        github_link = "https://github.com/" + github_name + "/" + project_settings["name"]
-
-        source_control_settings["type"] = "git"
-        source_control_settings["link"] = github_link
-
-        self.run_command(["git", "init"])
-        self.run_command(["git", "add", "."])
-        self.run_command(["git", "commit", "-m", "\"Initial Commit\""])
-        self.run_command(["git", "remote", "add", "origin", github_link])
-
-        # Create the repository
-        while True:
-            # read more about github's request optins here: https://developer.github.com/v3/repos/#input
-            github_request = {
-                    "name": project_settings["name"],
-                    "description": project_settings["description"]
-                }
-
-            # make the request using github's api
-            call = subprocess.Popen(
-                "curl -sS -u " + github_name + " https://api.github.com/user/repos " +
-                "-d '" + json.dumps(github_request) + "'", 
-                stdout=subprocess.PIPE, cwd=self.get_project_root(), shell=True)
-
-            out,err = call.communicate()
-
-            response = json.loads(out.decode("ascii", errors="ignore"))
-
-            # is `message` is present, creation failed
-            if not "message" in response:
-                print("Succesfully created repository\t", github_link)
-                break
-            else:
-                print("Cannot create repository\t", github_link)
-                
-                # the only thing that can be fixed is bad credentials
-                if (response["message"] == "Bad credentials"):
-                    if not prompt_for("Wrong username/password. Try again?", implicit_yes=True):
-                        return
-
-                    print("Enter your github profile (blank=" + github_name + "): ", end="")
-                    new_github_name = input()
-                    if new_github_name != "":
-                        github_name = new_github_name
-                else:
-                    print("Reason:\t", response["message"])
-                    return
-
-        self.settings.set("sourceControl", source_control_settings)
-
-        print("Making the initial commit\t" + github_link)
-        self.run_command(["git", "push", "-u", "origin", "master"])
-
     def ensure_packages(self):
         self.get_package_installer().ensure_packages_installed(*INITIAL_REQUIREMENTS)
         self.installer.install_pip()
@@ -147,8 +85,5 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
         if not os.path.exists(os.path.join(self.get_project_root(), "establishment")):
             self.run_command(["git", "clone", "https://github.com/establishment/django-establishment", "establishment"])
-
-        if not self.settings.has("sourceControl"):
-            self.publish_to_github()
 
         SetupStemAppCommand("dev").run()

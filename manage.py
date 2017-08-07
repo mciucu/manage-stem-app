@@ -7,6 +7,7 @@ from commands.create import CreateStemAppCommand
 from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
 from commands.run import RunStemAppCommand
+from commands.publish import PublishStemAppCommand
 
 def colorize(text):
     if not isinstance(text, str):
@@ -26,6 +27,7 @@ def main():
                              type=str,
                              nargs="?")
     action_type.add_argument("--init", help="Initialize a Stem app from a stem.json", action="store_true")
+    action_type.add_argument("--publish", help="Publish app to GitHub", action="store_true")
     action_type.add_argument("--setup",
                              help="Configure a newly cloned app",
                              action="store",
@@ -46,6 +48,8 @@ def main():
         CreateStemAppCommand(args.create).run()
     elif args.init:
         InitializeStemAppCommand().run()
+    elif args.publish:
+        PublishStemAppCommand().run(explicit_call=True)
     elif args.setup:
         SetupStemAppCommand(args.setup).run()
     elif args.build:
