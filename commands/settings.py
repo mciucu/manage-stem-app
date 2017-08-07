@@ -48,7 +48,7 @@ class SettingsFileManager(object):
                 self.settings = json.load(data_file)
         else:
             if die_on_missing:
-                sys.exit("Missing settings file: ", file_name)
+                sys.exit("Missing settings file %s" % file_name)
             self.settings = dict()
 
         if extra:

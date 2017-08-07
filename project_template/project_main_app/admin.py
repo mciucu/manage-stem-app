@@ -8,4 +8,4 @@ class MyUserAdmin(UserAdmin):
     pass
 
 
-admin.site.register(User, MyUserAdmin)
+# admin.site.register(User, MyUserAdmin)
