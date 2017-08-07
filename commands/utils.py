@@ -10,26 +10,32 @@ def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123
 
 def prompt_for(question, implicit_yes=True):
     if implicit_yes:
-        print(question + " [Y/n]")
+        print(question + " [Y/n] ", end="")
         choice = input().lower()
         if choice.startswith("n"):
             return False
         return True
     else:
-        print(question + " [y/N]")
+        print(question + " [y/N] ", end="")
         choice = input().lower()
         if choice.startswith("y"):
             return True
         return False
 
 
-def valid_input_for(query, on_fail="Please try again: ", is_valid=lambda x: x != ""):
+def valid_input_for(query, default=None, on_fail="Please try again: ", is_valid=lambda x: x != ""):
     message = query
     while True:
         print(message, end="")
+        if default is not None:
+            print("[default=" + default +"]", end="")
+        print(": ", end="")
         x = input()
         if is_valid(x):
             break
+        else:
+            if default is not None:
+                return default
         message = on_fail
     return x
 
