@@ -21,11 +21,11 @@ import establishment.chat.views
 urlpatterns = [
     url(r'^djangoadmin/', admin.site.urls),
     url(r"^", include("establishment.localization.urls")),
-    url(r"^", include("establishment.content.urls_single_page")),
+    url(r"^", include("establishment.content.urls")),
     url(r"^accounts/", include("establishment.accounts.urls")),
 
-    url(r"^blog/", include("establishment.blog.urls_single_page")),
-    url(r"^forum/", include("establishment.forum.urls_single_page")),
+    url(r"^blog/", include("establishment.blog.urls")),
+    url(r"^forum/", include("establishment.forum.urls")),
     url(r"^docs/", include("establishment.documentation.urls")),
     url(r"^chat/", include("establishment.chat.urls")),
 
@@ -36,16 +36,3 @@ urlpatterns = [
     # Your own urls
     url(r"^", include("{{project_main_app}}.urls")),
 ]
-
-if settings.DEBUG:
-    # Alter the function that serves static files, to wait for bundling to be ready
-
-    from django.views import static as static_view
-
-    old_staticfiles_serve = static_view.serve
-
-    def static_serve(request, static_path, document_root=None, **kwargs):
-        print("Going to serve a static file:", static_path, document_root, kwargs)
-        return old_staticfiles_serve(request, static_path, document_root=document_root, **kwargs)
-
-    static_view.serve = static_serve
