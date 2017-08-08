@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^djangoadmin/', admin.site.urls),
     url(r"^", include("establishment.localization.urls")),
     url(r"^", include("establishment.content.urls_single_page")),
-    url(r"^accounts/", include("establishment.accounts.urls_single_page")),
+    url(r"^accounts/", include("establishment.accounts.urls")),
 
     url(r"^blog/", include("establishment.blog.urls_single_page")),
     url(r"^forum/", include("establishment.forum.urls_single_page")),
