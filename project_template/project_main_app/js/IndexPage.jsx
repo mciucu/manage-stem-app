@@ -5,7 +5,7 @@ export class IndexPage extends UI.Element {
         return [
             <TabArea>
                 <Panel title="First">
-                    <h1>The first panel</h1>
+                    <h1>${author}$</h1>
                 </Panel>
                 <Panel title="Second">
                     <h2>The second panel</h2>

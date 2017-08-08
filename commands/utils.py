@@ -94,6 +94,8 @@ def render_template(path_from, path_to, context, verbosity=2):
     elif path_to_extension == ".template":
         path_to = path_to_without_extension
         output_is_template = True
+    elif path_to_extension == ".jsx":
+        output_is_template = True
 
     if verbosity >= 2:
         print("Rendering", path_from, "->", path_to)

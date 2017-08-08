@@ -70,4 +70,4 @@ class CreateStemAppCommand(BaseStemAppCommand):
 
         self.settings.set("project", self.get_project_settings_from_console())
 
-        InitializeStemAppCommand().run()
+        # InitializeStemAppCommand().run()

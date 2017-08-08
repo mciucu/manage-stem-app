@@ -91,7 +91,7 @@ class LinuxInstaller(Installer):
 
 
 class MacInstaller(Installer):
-    PACKAGE_MANAGER = ["brew"]
+    PACKAGE_MANAGER = "brew"
 
     def ensure_package_manager_is_installed(self):
         if not self.is_installed(self.PACKAGE_MANAGER):
