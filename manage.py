@@ -46,6 +46,10 @@ def main():
 
     if args.create is not None:
         CreateStemAppCommand(args.create).run()
+        InitializeStemAppCommand().run()
+        PublishStemAppCommand().run()
+        SetupStemAppCommand(args.setup).run()
+        RunStemAppCommand().run()
     elif args.init:
         InitializeStemAppCommand().run()
     elif args.publish:
