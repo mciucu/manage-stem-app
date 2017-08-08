@@ -55,9 +55,6 @@ class SetupStemAppCommand(BaseStemAppCommand):
         database_connection.close()
 
     def run(self):
-        if not is_sudo():
-            sys.exit("Please re-run with administrator rights!")
-
         self.install_requirements()
 
         project_name = self.settings.get("project", "name")
@@ -91,6 +88,8 @@ class SetupStemAppCommand(BaseStemAppCommand):
         self.installer.ensure_packages_installed(*SETUP_REQUIREMENTS)
         self.installer.install_nodejs()
 
-        self.run_command(["npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
+        print("Installing global node requirements", SETUP_NPM_REQUIREMENTS)
+        self.run_command(["sudo", "npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
         self.run_command(["npm", "install"])
+        # TODO: create virtualenv
         self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])

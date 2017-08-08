@@ -43,14 +43,6 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         self.run_command(["pip3", "install", "--upgrade"] + INITIAL_PIP3_REQUIREMENTS)
 
     def run(self):
-        print('nope')
-        print('nope')
-        print('nope')
-        if not is_sudo():
-            print('nope')
-            sys.exit("Please re-run with administrator rights!")
-
-        print('nope2')
         self.ensure_packages()
         project_settings = self.settings.get("project")
 

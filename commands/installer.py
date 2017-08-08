@@ -20,6 +20,9 @@ class Installer(ABC):
     def is_installed(self, package):
         return subprocess.call("type " + package, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
+    def get_package_manager_command(self):
+        return [self.PACKAGE_MANAGER]
+
     def run_command(self, args):
         subprocess.check_call(args)
 
@@ -48,7 +51,7 @@ class Installer(ABC):
 
     def install_packages(self, *packages):
         self.update_package_manager()
-        self.run_command([self.PACKAGE_MANAGER] + self.PACKAGE_MANAGER_INSTALL_OPTIONS + list(*packages))
+        self.run_command(self.get_package_manager_command() + self.PACKAGE_MANAGER_INSTALL_OPTIONS + list(*packages))
 
     def ensure_packages_installed(self, *packages):
         packages_to_install = [package for package in packages if not self.is_installed(package)]
@@ -57,13 +60,16 @@ class Installer(ABC):
 
     def update_package_manager(self):
         if not self.have_updated_package_manager:
-            self.run_command([self.PACKAGE_MANAGER] + self.PACKAGE_MANAGER_UPDATE_OPTIONS)
+            self.run_command(self.get_package_manager_command() + self.PACKAGE_MANAGER_UPDATE_OPTIONS)
             self.have_updated_package_manager = True
 
 
 class LinuxInstaller(Installer):
     PACKAGE_MANAGER = "apt"
     PACKAGE_MANAGER_INSTALL_OPTIONS = ["install", "-y"]
+
+    def get_package_manager_command(self):
+        return ["sudo", self.PACKAGE_MANAGER]
 
     def install_postgresql(self):
         if not self.is_installed("psql"):
@@ -85,7 +91,7 @@ class LinuxInstaller(Installer):
 
 
 class MacInstaller(Installer):
-    PACKAGE_MANAGER = "brew"
+    PACKAGE_MANAGER = ["brew"]
 
     def ensure_package_manager_is_installed(self):
         if not self.is_installed(self.PACKAGE_MANAGER):

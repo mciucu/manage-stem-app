@@ -43,14 +43,14 @@ class BaseStemAppCommand(object):
     def get_project_path(self, *paths):
         return os.path.join(self.get_project_root(), *paths)
 
-    def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=True, merge_stderr_to_stdout=False, raise_exception=True):
+    def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=False, merge_stderr_to_stdout=False, raise_exception=True):
         stdout = None
         if pipe_stdout:
             stdout = subprocess.PIPE
 
         stderr = None
         if merge_stderr_to_stdout:
-            stderr= subprocess.STDOUT
+            stderr = subprocess.STDOUT
         else:
             if pipe_stderr:
                 stderr = subprocess.PIPE
