@@ -1,10 +1,14 @@
 body {
     margin: 0;
-    font-family: "lato";
+    font-family: "lato", sans-serif;
 }
 .hidden {
     display: none !important;
 }
 * {
     box-sizing: border-box;
+}
+a {
+    text-decoration: none;
+    color: #337ab7;
 }

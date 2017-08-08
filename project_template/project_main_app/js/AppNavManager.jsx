@@ -10,6 +10,7 @@ import {
     navSessionManager,
 } from "navmanager/NavElement";
 import {Direction, Orientation} from "UI";
+import {LoginModal} from "LoginModal";
 
 /*
  * This is the NavManager file of your app.
@@ -33,7 +34,8 @@ class AppNavManager extends NavManager {
             <NavSection
                 anchor={Direction.LEFT}
                 style={{
-                    margin: 0,
+                    margin: "0",
+                    // paddingLeft: this.leftSidePanel ? "0px" : "50px",
                 }}>
                 <NavLinkElement value="Home" href="/" />
                 <NavLinkElement value="Blog" href="/blog" />
@@ -46,11 +48,13 @@ class AppNavManager extends NavManager {
             <NavSection
                 anchor={Direction.RIGHT}
                 style={{
-                    margin: 0,
+                    margin: "0",
+                    // paddingRight: this.rightSidePanel ? "0px" : "50px",
                 }}>
-                <NavElement value="First" />
-                <NavElement value="Second" />
-                <NavElement value="Third" />
+                {
+                    /*!USER.isAuthenticated &&*/
+                    <NavElement value="Login/Signup" onClick={() => LoginModal.show()} />
+                }
             </NavSection>
         ];
     }
