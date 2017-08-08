@@ -1,6 +1,6 @@
 import random
 
-import os, sys
+import os
 
 
 def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"):
@@ -42,10 +42,6 @@ def valid_input_for(query, default=None, on_fail="Please try again: ", is_valid=
 
 def is_sudo():
     return os.getuid() == 0
-
-def require_sudo():
-    if not is_sudo():
-        sys.exit("Please re-run with administrator rights!")
 
 
 def get_setting_from_console(message, default=None):
