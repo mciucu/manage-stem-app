@@ -20,7 +20,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
             database_password = valid_input_for(query="Please enter the new password: ")
             self.run_command(["sudo", "-u", "postgres", "psql", "-c", "ALTER USER postgres WITH PASSWORD '%s';" % database_password])
         else:
-            database_password = valid_input_for(query="Please enter the password: ")
+            database_password = valid_input_for(query="Please enter the database password (blank=postgres): ", default="postgres")
 
         connection_settings = {
             "database": "postgres",
@@ -64,12 +64,6 @@ class SetupStemAppCommand(BaseStemAppCommand):
             "secret_key": generate_random_key(),
             "database_name": database_name
         }
-
-        # TODO: modify context here
-        # if self.setup_type == "production":
-        #    install fail2ban, nginx, etc.
-        #    setup sysctl.conf and security limits
-        #    generate a HTTPS key
 
         template_file = self.get_manager_resource("project_template/resources/setup/dev/local_settings.py")
         destination_file = self.get_project_path(project_name, "local_settings.py")
