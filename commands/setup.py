@@ -79,11 +79,11 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def install_requirements(self):
         self.installer.install_postgresql()
 
-        self.installer.ensure_packages_installed(*SETUP_REQUIREMENTS)
+        self.installer.ensure_packages_installed(SETUP_REQUIREMENTS)
         self.installer.install_nodejs()
 
         print("Installing global node requirements", SETUP_NPM_REQUIREMENTS)
         self.run_command(["sudo", "npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
         self.run_command(["npm", "install"])
         # TODO: create virtualenv
-        self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
+        self.run_command(["sudo", "pip3", "install", "--upgrade", "-r", "requirements.txt"])

@@ -49,14 +49,14 @@ class Installer(ABC):
         version = line[1:-1].decode().split(".")
         return len(version) == 0 or int(version[0]) < REQUIRED_NODEJS_VERSION
 
-    def install_packages(self, *packages):
+    def install_packages(self, packages):
         self.update_package_manager()
-        self.run_command(self.get_package_manager_command() + self.PACKAGE_MANAGER_INSTALL_OPTIONS + list(*packages))
+        self.run_command(self.get_package_manager_command() + self.PACKAGE_MANAGER_INSTALL_OPTIONS + packages)
 
-    def ensure_packages_installed(self, *packages):
+    def ensure_packages_installed(self, packages):
         packages_to_install = [package for package in packages if not self.is_installed(package)]
         if len(packages_to_install) > 0:
-            self.install_packages(*packages)
+            self.install_packages(packages_to_install)
 
     def update_package_manager(self):
         if not self.have_updated_package_manager:
@@ -87,7 +87,7 @@ class LinuxInstaller(Installer):
 
     def install_pip(self):
         if not self.is_installed("pip3"):
-            self.run_command(["easy_install3", "pip"])
+            self.run_command(["sudo", "easy_install3", "pip"])
 
 
 class MacInstaller(Installer):
