@@ -41,10 +41,10 @@ class Installer(ABC):
         pass
 
     def should_install_nodejs(self):
-        if not self.is_installed("nodejs"):
+        if not self.is_installed("node"):
             return True
 
-        version_output = subprocess.Popen(["nodejs", "--version"], stdout=subprocess.PIPE).stdout
+        version_output = subprocess.Popen(["node", "--version"], stdout=subprocess.PIPE).stdout
         line = next(line for line in version_output)
         version = line[1:-1].decode().split(".")
         return len(version) == 0 or int(version[0]) < REQUIRED_NODEJS_VERSION
