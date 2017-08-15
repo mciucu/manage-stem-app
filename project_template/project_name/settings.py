@@ -16,10 +16,11 @@ import os
 import traceback
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.normpath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
-# Recommendations at csacademy/docs/stem-app/recommended-settings
+# Recommendations at https://stemjs.org/docs/establishment/recommended-settings
 # Django docs: https://docs.djangoproject.com/en/{{ django_version }}/howto/deployment/checklist/
 
 # SECURITY WARNING!
@@ -84,6 +85,15 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+PUBLIC_STATE_COLLECTORS = ["establishment.baseconfig.utils.export_to_public_state"]
+
+PUBLIC_STATE_PATHS = [
+    (
+        os.path.join(PROJECT_ROOT, "{{project_main_app}}/templates/PublicState.jstemplate"),
+        os.path.join(PROJECT_ROOT, "{{project_main_app}}/static/js/PublicState.js")
+    ),
 ]
 
 AUTHENTICATION_BACKENDS = (

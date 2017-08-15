@@ -1,1 +1,1 @@
-default_app_config = "{{ project_main_app}}.apps.DemoAppConfig"
+default_app_config = "{{ project_main_app}}.apps.MainAppConfig"
