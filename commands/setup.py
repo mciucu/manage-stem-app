@@ -1,7 +1,6 @@
-import sys
 from .base import *
 from .build import BuildStemAppCommand
-from .utils import is_sudo, prompt_for, valid_input_for, generate_random_key, render_template
+from .utils import prompt_for, valid_input_for, generate_random_key, render_template
 
 SETUP_NPM_REQUIREMENTS = ["babel-cli", "rollup"]
 SETUP_REQUIREMENTS = ["redis-server"]

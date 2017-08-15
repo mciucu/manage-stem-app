@@ -11,7 +11,7 @@ import {GlobalState} from "state/State";
 PageTitleManager.setDefaultTitle("{{project_long_name}}");
 
 // Add an ajax preprocessor to always have the csfr token
-Ajax.addDefaultPreprocessor((options) => {
+Ajax.addPreprocessor((options) => {
     options.credentials = options.credentials || "include";
     options.headers.set("X-CSRFToken", getCookie("csrftoken"));
 });
