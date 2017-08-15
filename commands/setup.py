@@ -85,4 +85,6 @@ class SetupStemAppCommand(BaseStemAppCommand):
         self.run_command(["sudo", "npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
         self.run_command(["npm", "install"])
         # TODO: create virtualenv
-        self.run_command(["pip3", "install", "--upgrade", "-r", "requirements.txt"])
+        if sys.platform.startswith("linux"):
+            self.installer.install_packages(["python3-dev", "build-essential"])
+        self.run_command(["sudo", "pip3", "install", "--upgrade", "-r", "requirements.txt"])

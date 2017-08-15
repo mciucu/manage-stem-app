@@ -38,9 +38,10 @@ class InitializeStemAppCommand(BaseStemAppCommand):
                 render_template(template_file, dest_file, context)
 
     def ensure_packages(self):
-        self.get_package_installer().ensure_packages_installed(*INITIAL_REQUIREMENTS)
+        self.get_package_installer().ensure_packages_installed(INITIAL_REQUIREMENTS)
         self.installer.install_pip()
-        self.run_command(["pip3", "install", "--upgrade"] + INITIAL_PIP3_REQUIREMENTS)
+        # TODO: this should be installed in a virtualenv here
+        self.run_command(["sudo", "pip3", "install", "--upgrade"] + INITIAL_PIP3_REQUIREMENTS)
 
     def run(self):
         self.ensure_packages()

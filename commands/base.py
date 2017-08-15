@@ -59,6 +59,8 @@ class BaseStemAppCommand(object):
         if isinstance(command, list):
             str_command = ""
             for comm in command:
+                if " " in comm:
+                    comm = '"' + comm + '"'
                 str_command += comm + " "
             command = str_command
 
@@ -67,7 +69,10 @@ class BaseStemAppCommand(object):
         returncode = call.returncode
 
         if returncode and raise_exception:
-            err = err.decode("ascii", errors="ignore")
+            try:
+                err = err.decode("ascii", errors="ignore")
+            except:
+                pass
             raise Exception("Failed to run: ", command, '\n', err)
 
         return (out, err, returncode)

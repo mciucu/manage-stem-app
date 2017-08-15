@@ -5,6 +5,7 @@ from commands.utils import prompt_for, valid_input_for, is_sudo, generate_random
 
 INITIAL_REQUIREMENTS = ["curl", "git"]
 
+
 class PublishStemAppCommand(BaseStemAppCommand):
     def run(self, explicit_call=False):
         if is_sudo():
@@ -27,7 +28,7 @@ class PublishStemAppCommand(BaseStemAppCommand):
             interface.run()
 
     def ensure_packages(self):
-        self.get_package_installer().ensure_packages_installed(*INITIAL_REQUIREMENTS)
+        self.get_package_installer().ensure_packages_installed(INITIAL_REQUIREMENTS)
 
 
 class GitInterface(BaseStemAppCommand):
@@ -99,7 +100,7 @@ class GitInterface(BaseStemAppCommand):
         if self.does_remote_repo_exist():
             if prompt_for("It looks like that repository " + self.repo_link + " already exists.\nUse another repository?", implicit_yes=True):
                 self.get_user_settings()
-                return create_remote_repo()
+                return self.create_remote_repo()
             else:
                 return True
 
@@ -130,13 +131,12 @@ class GitInterface(BaseStemAppCommand):
                 print("Cannot make commit. Error:\n", err)
                 return False
 
-
         if not self.current_remote_link:
             self.run_command("git remote add origin " + self.repo_link)
 
-
         print("Pushing initial commit\t" + (self.current_remote_link or self.repo_link))
         self.run_command("git push -u origin master")
+
 
 class GitHubInterface(GitInterface):
     def get_repo_link(self):
