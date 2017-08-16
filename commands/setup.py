@@ -78,7 +78,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def install_requirements(self):
         self.installer.install_postgresql()
 
-        self.installer.ensure_packages_installed(*SETUP_REQUIREMENTS)
+        self.installer.ensure_packages_installed(SETUP_REQUIREMENTS)
         self.installer.install_nodejs()
 
         print("Installing global node requirements", SETUP_NPM_REQUIREMENTS)

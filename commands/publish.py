@@ -8,11 +8,6 @@ INITIAL_REQUIREMENTS = ["curl", "git"]
 
 class PublishStemAppCommand(BaseStemAppCommand):
     def run(self, explicit_call=False):
-        if is_sudo():
-            print("[WARNING] Do not run --publish with root access.\n" +
-                "This may be harmfull in the future\n")
-            sys.exit(1)
-
         should_publish = explicit_call
 
         if not explicit_call:
