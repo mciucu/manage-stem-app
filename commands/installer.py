@@ -106,7 +106,7 @@ class MacInstaller(Installer):
 
     def install_nodejs(self):
         if self.should_install_nodejs():
-            self.install_packages(["nodejs"])
+            self.install_packages(["node"])
 
     def install_pip(self):
         if not self.is_installed("pip3"):
