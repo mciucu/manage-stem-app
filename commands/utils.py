@@ -91,11 +91,17 @@ def render_template_to_string(filename, context, output_is_template=False):
 
 
 def render_template(path_from, path_to, context, verbosity=2):
+    just_copy = False
     output_is_template = False
 
     path_to_without_extension, path_to_extension = os.path.splitext(path_to)
 
-    if path_to_extension == ".noextension":
+    if path_to_extension == ".raw":
+        path_to = path_to_without_extension
+        just_copy = True
+    elif path_to.endswith(".min.js"):
+        just_copy = True
+    elif path_to_extension == ".noextension":
         path_to = path_to_without_extension
     elif path_to_extension == ".template":
         path_to = path_to_without_extension
@@ -106,7 +112,7 @@ def render_template(path_from, path_to, context, verbosity=2):
     if verbosity >= 2:
         print("Rendering", path_from, "->", path_to)
 
-    output_content = render_template_to_string(path_from, context, output_is_template)
+    output_content = not just_copy and render_template_to_string(path_from, context, output_is_template)
 
     os.makedirs(os.path.dirname(path_to), exist_ok=True)
 

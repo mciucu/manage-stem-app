@@ -78,5 +78,3 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
         if not os.path.exists(os.path.join(self.get_project_root(), "establishment")):
             self.run_command(["git", "clone", "https://github.com/establishment/django-establishment", "establishment"])
-
-        # SetupStemAppCommand("dev").run()
