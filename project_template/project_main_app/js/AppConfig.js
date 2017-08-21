@@ -16,9 +16,6 @@ Ajax.addPreprocessor((options) => {
     options.headers.set("X-CSRFToken", getCookie("csrftoken"));
 });
 
-CodeEditor.requireAce = function (callback) {
-    ensure(["/static/js/ext/ace/ace.js"], callback);
-};
 
 GlobalState.registerStream = function (streamName) {
     WebsocketSubscriber.addListener(streamName, GlobalState.applyEventWrapper);

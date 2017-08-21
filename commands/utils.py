@@ -2,6 +2,8 @@ import random
 
 import os
 
+import shutil
+
 
 def generate_random_key(length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"):
     rng = random.SystemRandom()
@@ -60,8 +62,12 @@ def render_template_to_string(filename, context, output_is_template=False):
     import jinja2
     import uuid
 
-    with open(filename, "r") as content_file:
-        template_content = content_file.read()
+    try:
+        with open(filename, "r") as content_file:
+            template_content = content_file.read()
+    except UnicodeDecodeError:
+        print("Skipping file %s, as it's non-unicode" % filename)
+        return None
 
     if output_is_template:
         # We're generating a template file itself, escape all the template strings
@@ -103,5 +109,9 @@ def render_template(path_from, path_to, context, verbosity=2):
     output_content = render_template_to_string(path_from, context, output_is_template)
 
     os.makedirs(os.path.dirname(path_to), exist_ok=True)
-    with open(path_to, "w") as rendered_file:
-        rendered_file.write(output_content)
+
+    if output_content:
+        with open(path_to, "w") as rendered_file:
+            rendered_file.write(output_content)
+    else:
+        shutil.copyfile(path_from, path_to)

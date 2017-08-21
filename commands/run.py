@@ -11,5 +11,10 @@ class RunStemAppCommand(BaseStemAppCommand):
         rollup_proc = Process(target=BuildStemAppCommand(watch=True).run)
         rollup_proc.start()
 
-        django_proc = Process(target=self.run_command(["python3", "manage.py", "runserver"]))
+        def django_runserver():
+            self.run_command(["python3", "manage.py", "migrate"])
+            self.run_command(["python3", "manage.py", "generate_public_state"])
+            self.run_command(["python3", "manage.py", "runserver"])
+
+        django_proc = Process(target=django_runserver)
         django_proc.start()
