@@ -43,7 +43,16 @@ class BaseStemAppCommand(object):
     def get_project_path(self, *paths):
         return os.path.join(self.get_project_root(), *paths)
 
-    def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=False, merge_stderr_to_stdout=False, raise_exception=True):
+    def concat_command(self, command):
+        if isinstance(command, list):
+            def add_quotes(comm):
+                if " " in comm:
+                    comm = '"' + comm + '"'
+                return comm
+            command = " ".join(map(add_quotes, command))
+        return command
+
+    def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=False, merge_stderr_to_stdout=False, raise_exception=True, **extra):
         stdout = None
         if pipe_stdout:
             stdout = subprocess.PIPE
@@ -56,13 +65,7 @@ class BaseStemAppCommand(object):
                 stderr = subprocess.PIPE
 
         path = os.path.join(self.get_project_root(), path)
-        if isinstance(command, list):
-            str_command = ""
-            for comm in command:
-                if " " in comm:
-                    comm = '"' + comm + '"'
-                str_command += comm + " "
-            command = str_command
+        command = self.concat_command(command)
 
         call = subprocess.Popen(command, cwd=path, stdout=stdout, stderr=stderr, shell=True)
         out, err = call.communicate()
@@ -75,7 +78,7 @@ class BaseStemAppCommand(object):
                 pass
             raise Exception("Failed to run: ", command, '\n', err)
 
-        return (out, err, returncode)
+        return out, err, returncode
 
     def run(self):
         raise NotImplementedError("Implement run()")

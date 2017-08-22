@@ -121,3 +121,27 @@ def render_template(path_from, path_to, context, verbosity=2):
             rendered_file.write(output_content)
     else:
         shutil.copyfile(path_from, path_to)
+
+
+def to_snake_case(txt):
+    orda = ord('a')
+    ordA = ord('A')
+    ordZ = ord('Z')
+
+    new_txt = ""
+    for c in txt:
+        if ordA <= ord(c) <= ordZ:
+            new_txt += "_" + chr(ord(c) + orda - ordA)
+        else:
+            new_txt += c
+
+    return new_txt
+
+
+def dict_to_snake_case(json_dict):
+    if not isinstance(json_dict, dict):
+        return json_dict
+    python_dict = {}
+    for key in json_dict:
+        python_dict[to_snake_case(key)] = dict_to_snake_case(json_dict[key])
+    return python_dict

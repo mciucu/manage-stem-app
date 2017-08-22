@@ -4,6 +4,7 @@ import argparse
 
 from commands.build import BuildStemAppCommand
 from commands.create import CreateStemAppCommand
+from commands.custom import CustomStemAppCommand
 from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
 from commands.run import RunStemAppCommand
@@ -60,6 +61,7 @@ def main():
         BuildStemAppCommand(watch=False).run()
     elif args.watch:
         BuildStemAppCommand(watch=True).run()
+        # CustomStemAppCommand("run").run()
     elif args.run:
         RunStemAppCommand().run()
     else:
