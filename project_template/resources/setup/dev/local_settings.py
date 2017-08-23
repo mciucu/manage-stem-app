@@ -1,15 +1,15 @@
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '{{ database_name }}',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "{{ database_name }}",
+        "USER": "{{database_user}}",
+        "PASSWORD": "{{database_password}}",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
     },
 }
 
@@ -36,3 +36,5 @@ STATIC_FILE_WATCHERS = [
 
 WEBSOCKET_HEARTBEAT_INTERVAL = 30
 WEBSOCKET_HEARTBEAT = "my-heartbeat-will-go-on"
+
+AUTH_PASSWORD_VALIDATORS = []

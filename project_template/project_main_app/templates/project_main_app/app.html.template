@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %} ${project_long_name}$ {% endblock %}</title>
+    <title>{% block title %} ${project_name_long}$ {% endblock %}</title>
     <meta charset="utf-8">
     <meta name="description" content="${ project_description }$">
 {# The following 2 tags are for facebook share image display. #}

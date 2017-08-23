@@ -1,6 +1,7 @@
 import json
 from .base import *
-from .utils import prompt_for, valid_input_for, is_sudo, generate_random_key, render_template, render_template_to_string
+from .utils import prompt_for, valid_input_for, is_sudo, generate_random_key, render_template, \
+    render_template_to_string, clean_name
 from .setup import SetupStemAppCommand
 
 INITIAL_REQUIREMENTS = ["curl", "python", "python3", "git"]
@@ -17,7 +18,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
         template_dir = self.get_manager_resource("project_template")
 
-        project_name = context["project_name"]
+        project_name_clean = context["project_name"]
         project_main_app = context["project_main_app"]
 
         for root, dirs, files in os.walk(template_dir):
@@ -33,7 +34,7 @@ class InitializeStemAppCommand(BaseStemAppCommand):
 
                 template_file_relative = os.path.relpath(template_file, template_dir)
                 dest_file = os.path.join(self.get_project_root(), template_file_relative)
-                dest_file = dest_file.replace("project_name", project_name)
+                dest_file = dest_file.replace("project_name", project_name_clean)
                 dest_file = dest_file.replace("/project_main_app/", "/" + project_main_app + "/")
                 render_template(template_file, dest_file, context)
 
@@ -47,31 +48,17 @@ class InitializeStemAppCommand(BaseStemAppCommand):
         self.ensure_packages()
         project_settings = self.settings.get("project")
 
-        establishment_apps = map(lambda app_name: '"establishment.' + app_name + '"', [
-            "accounts",
-            "socialaccount",
-            "localization",
-            "errors",
-            "content",
-            "baseconfig",
-            "documentation",
-            # "emailing",
-            "chat",
-            "blog",
-            "forum",
-            "misc",
-        ])
+        clean_project_name = clean_name(project_settings["name"])
 
         context = {
             "author": project_settings["author"],
-            "project_name": project_settings["name"],
-            "project_main_app": project_settings["name"] + "app",
+            "project_name_long": project_settings["name"],
+            "project_name": clean_project_name,
+            "project_main_app": clean_project_name + "app",
             "project_description": project_settings["description"],
             "django_version": "1.11",
             "allowed_hosts": '"*"',
             "secret_key": generate_random_key(),
-            "establishment_apps": ",\n    ".join(establishment_apps),
-            "project_apps": '"' + project_settings["name"] + "app" + '"'
         }
 
         self.init_from_template(context)

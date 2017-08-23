@@ -48,9 +48,20 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.sites",
 
-    {{establishment_apps}},
+    "establishment.accounts",
+    "establishment.socialaccount",
+    "establishment.localization",
+    "establishment.errors",
+    "establishment.content",
+    "establishment.baseconfig",
+    "establishment.documentation",
+    "establishment.emailing",
+    "establishment.chat",
+    "establishment.blog",
+    "establishment.forum",
+    "establishment.misc",
 
-    {{project_apps}},
+    "{{project_main_app}}",
 ]
 
 MIDDLEWARE = [

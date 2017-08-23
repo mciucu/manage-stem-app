@@ -145,3 +145,7 @@ def dict_to_snake_case(json_dict):
     for key in json_dict:
         python_dict[to_snake_case(key)] = dict_to_snake_case(json_dict[key])
     return python_dict
+
+
+def clean_name(name):
+    return "".join([c for c in name if c.isalnum() or c == "_"])
