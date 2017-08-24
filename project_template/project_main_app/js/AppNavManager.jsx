@@ -1,4 +1,3 @@
-// UI components
 import {UI} from "UI";
 import {NavManager} from "navmanager/NavManager";
 import {
