@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "establishment.blog",
     "establishment.forum",
     "establishment.misc",
+    "establishment.webapp",
 
     "{{project_main_app}}",
 ]
@@ -74,6 +75,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "establishment.funnel.middleware.VisitorMiddleware",
+    "establishment.webapp.middleware.ProcessResponseMiddleware",
     "establishment.errors.middleware.ErrorMessageProcessingMiddleware",
 ]
 
@@ -98,7 +100,10 @@ TEMPLATES = [
     },
 ]
 
-PUBLIC_STATE_COLLECTORS = ["establishment.baseconfig.utils.export_to_public_state"]
+PUBLIC_STATE_COLLECTORS = [
+    "establishment.baseconfig.utils.export_to_public_state",
+    "establishment.socialaccount.utils.add_social_apps_to_public_state",
+]
 
 PUBLIC_STATE_PATHS = [
     (

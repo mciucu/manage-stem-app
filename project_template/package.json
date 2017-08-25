@@ -16,7 +16,7 @@
     "rollup-plugin-includepaths": "^0.1.8",
     "rollup-plugin-uglify": "^1.0.2",
     "rollup-watch": "^2.5.0",
-    "stem-core": "^0.3.4"
+    "stem-core": "^0.3.11"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
