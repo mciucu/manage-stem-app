@@ -17,6 +17,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 import establishment.chat.views
+from establishment.funnel.base_views import global_renderer
 
 urlpatterns = [
     url(r'^djangoadmin/', admin.site.urls),
@@ -35,4 +36,7 @@ urlpatterns = [
 
     # Your own urls
     url(r"^", include("{{project_main_app}}.urls")),
+
+    # Any other url is automatically treated as a single page app call
+    url(r"^", global_renderer.render_single_page_app)
 ]
