@@ -145,7 +145,7 @@ export class IndexPage extends UI.Element {
                     You can also use Stem components, for example - <code>TabArea</code>, <code>Panel</code>, <code>Button</code>
                 </p>
                 <p>
-                    Check the docs <Link href="https://stemjs.org/docs/">here</Link>.
+                    Check the docs <Link href="https://stemjs.org/docs/" newTab>here</Link>.
                 </p>
             </div>
         ];
