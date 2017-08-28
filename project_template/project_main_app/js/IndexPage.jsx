@@ -45,17 +45,6 @@ class QuoteStyle extends StyleSheet {
     };
 }
 
-class CodeStyle extends StyleSheet {
-    @styleRule
-    code = {
-        backgroundColor: "#eee",
-        fontSize: "15px",
-        padding: "2px 8px",
-        borderRadius: "5px",
-        fontFamily: '"Fira Mono", "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", Monaco, "Lucida Console", monospace',
-    };
-}
-
 class IndexPageStyle extends StyleSheet {
     @styleRule
     container = {
@@ -127,13 +116,6 @@ class Quote extends UI.Element {
     }
 }
 
-@registerStyle(CodeStyle)
-class Code extends UI.Primitive("span") {
-    extraNodeAttributes(attr) {
-        attr.addClass(this.styleSheet.code);
-    }
-}
-
 @registerStyle(IndexPageStyle)
 export class IndexPage extends UI.Element {
     extraNodeAttributes(attr) {
@@ -154,13 +136,13 @@ export class IndexPage extends UI.Element {
             </div>,
             <div className={this.styleSheet.bottomContainer}>
                 <p>
-                    Get started by editing <Code>${project_main_app}$/js/IndexPage.jsx</Code>
+                    Get started by editing <code>${project_main_app}$/js/IndexPage.jsx</code>
                 </p>
                 <p>
                     Save the code and just refresh the page.
                 </p>
                 <p>
-                    You can also use Stem components, for example - <Code>TabArea</Code>, <Code>Panel</Code>, <Code>Button</Code>
+                    You can also use Stem components, for example - <code>TabArea</code>, <code>Panel</code>, <code>Button</code>
                 </p>
                 <p>
                     Check the docs <Link href="https://stemjs.org/docs/">here</Link>.

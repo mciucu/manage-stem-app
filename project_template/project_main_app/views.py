@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from establishment.funnel.state import State
-from establishment.funnel.base_views import single_page_app, global_renderer
+from establishment.webapp.state import State
+from establishment.webapp.base_views import single_page_app, global_renderer
 
 
 def render_single_page_app(request):

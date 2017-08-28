@@ -1,4 +1,4 @@
-import {UI} from "UI";
+import {UI} from "ui/UI";
 import {MAIN_ROUTE} from "./Routes"
 import {AppNavManager} from "./AppNavManager.jsx";
 import {EstablishmentApp} from "EstablishmentApp";
