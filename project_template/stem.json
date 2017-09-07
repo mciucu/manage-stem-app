@@ -1,6 +1,45 @@
 {
+  "djangoRun": {
+    "isCommand": true,
+    "command": [{
+        "type": "django",
+        "command": "migrate"
+      }, {
+        "type": "django",
+        "command": "generate_public_state"
+      }, {
+      "type": "django",
+      "command": "runserver"
+    }]
+  },
   "build": {
-    "type": "rollup",
-    "configPath": "{{project_main_app}}/js"
+    "isCommand": true,
+    "path": "{{ project_main_app }}/js",
+    "command": "rollup",
+    "extraArgs": ["-c"]
+  },
+  "run": {
+    "isCommand": true,
+    "command": [{
+      "background": true,
+      "daemon": true,
+      "type": "stem",
+      "command": "build",
+      "extraArgs": ["--watch"]
+    }, {
+      "background": true,
+      "type": "stem",
+      "command": "djangoRun"
+    }]
+  },
+  "setup": {
+    "dev": {
+      "dependencies": ["redis-server", "nodejs", "postgresql"],
+      "npmDependencies": ["babel-cli", "rollup"]
+    },
+    "production": {
+      "dependencies": ["redis-server", "nodejs", "postgresql"],
+      "npmDependencies": []
+    }
   }
 }
