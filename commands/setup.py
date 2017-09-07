@@ -61,6 +61,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
         self.populate_database(context["database_name"])
 
         if self.setup_type == "dev":
+            self.run_command(["python3", "manage.py", "makemigrations"])
             self.run_command(["python3", "manage.py", "migrate"])
             if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
                 self.run_command(["python3", "manage.py", "createsuperuser"])
