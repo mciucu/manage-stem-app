@@ -8,17 +8,18 @@ from .utils import dict_to_snake_case
 class CustomStemAppCommand(BaseStemAppCommand):
     def __init__(self, name="", *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = name
+        self.config_name = name
 
     def get_config(self):
-        return self.settings.get(self.name)
+        if isinstance(self.config_name, str):
+            return self.settings.get(self.config_name)
+        return self.config_name
 
     def run_command(self, command, path="", pipe_stdout=False, pipe_stderr=False, merge_stderr_to_stdout=False, raise_exception=True, **extra):
         command_dict = extra.pop("command_dict", None)
         if command_dict:
             command = self.concat_command(command)
             command = " ".join([command, self.concat_command(command_dict.get("extraArgs", []))])
-        print(command)
         super().run_command(command, path, pipe_stdout, pipe_stderr, merge_stderr_to_stdout, raise_exception, **extra)
 
     def run_django_command(self, command_dict):
@@ -54,7 +55,7 @@ class CustomStemAppCommand(BaseStemAppCommand):
             raise Exception("Invalid command type " + command_type)
 
     def run_command_with_parallelize_check(self, command_dict):
-        is_parallelized = command_dict.get("parallelized", False)
+        is_parallelized = command_dict.get("background", False)
         if is_parallelized:
             is_daemon = command_dict.get("daemon", False)
             thread = Thread(target=lambda: self.run_command_raw(command_dict), daemon=is_daemon)
@@ -64,8 +65,8 @@ class CustomStemAppCommand(BaseStemAppCommand):
 
     def run(self, *extra_args):
         config = self.get_config()
-        if not config["isCommand"]:
-            raise TypeError("Trying to run a non-command object as a command: " + self.name)
+        if isinstance(self.config_name, str) and not config.get("isCommand", False):
+            raise TypeError("Trying to run a non-command object as a command: " + self.config_name)
         config = deepcopy(config)
         config["extraArgs"] = config.get("extraArgs", []) + list(extra_args)
         self.run_command_with_parallelize_check(config)

@@ -2,13 +2,12 @@
 import sys
 import argparse
 
-from commands.build import BuildStemAppCommand
 from commands.create import CreateStemAppCommand
 from commands.custom import CustomStemAppCommand
 from commands.initialize import InitializeStemAppCommand
 from commands.setup import SetupStemAppCommand
-from commands.run import RunStemAppCommand
 from commands.publish import PublishStemAppCommand
+
 
 def colorize(text):
     if not isinstance(text, str):
@@ -42,14 +41,16 @@ def main():
     action_type.add_argument("--seticon", help="Set a favicon to be used by the website", action="store")
     action_type.add_argument("--deploy", help="Deploy the source code to a remote server", action="store")
     action_type.add_argument("--version", help="Display the helper version", action="version", version="Stem App Manager 0.1.0")
+    action_type.add_argument("-c", "--command", help="Run a custom command, defined in stem.json")
 
     args = parser.parse_args()
 
     if args.create is not None:
         CreateStemAppCommand(args.create).run()
         InitializeStemAppCommand().run()
+        PublishStemAppCommand().run()
         SetupStemAppCommand(args.setup or "dev").run()
-        RunStemAppCommand().run()
+        CustomStemAppCommand("run").run()
     elif args.init:
         InitializeStemAppCommand().run()
     elif args.publish:
@@ -57,12 +58,13 @@ def main():
     elif args.setup:
         SetupStemAppCommand(args.setup).run()
     elif args.build:
-        BuildStemAppCommand(watch=False).run()
+        CustomStemAppCommand("build").run()
     elif args.watch:
-        BuildStemAppCommand(watch=True).run()
-        # CustomStemAppCommand("run").run()
+        CustomStemAppCommand("build").run("--watch")
     elif args.run:
-        RunStemAppCommand().run()
+        CustomStemAppCommand("run").run()
+    elif args.command:
+        CustomStemAppCommand(args.command).run()
     else:
         parser.print_help()
 

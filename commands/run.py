@@ -1,5 +1,5 @@
 from commands.base import BaseStemAppCommand
-from commands.build import BuildStemAppCommand
+from commands.custom import CustomStemAppCommand
 from multiprocessing import Process
 
 
@@ -8,7 +8,7 @@ class RunStemAppCommand(BaseStemAppCommand):
         super().__init__(*args, **kwargs)
 
     def run(self):
-        rollup_proc = Process(target=BuildStemAppCommand(watch=True).run)
+        rollup_proc = Process(target=lambda: CustomStemAppCommand("build").run("--watch"))
         rollup_proc.start()
 
         def django_runserver():

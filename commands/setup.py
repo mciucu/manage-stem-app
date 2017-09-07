@@ -1,9 +1,6 @@
 from .base import *
-from .build import BuildStemAppCommand
+from .custom import CustomStemAppCommand
 from .utils import prompt_for, valid_input_for, generate_random_key, render_template, clean_name
-
-SETUP_NPM_REQUIREMENTS = ["babel-cli", "rollup"]
-SETUP_REQUIREMENTS = ["redis-server"]
 
 
 class SetupStemAppCommand(BaseStemAppCommand):
@@ -11,6 +8,18 @@ class SetupStemAppCommand(BaseStemAppCommand):
         super().__init__(*args, **kwargs)
         self.setup_type = setup_type
         self.get_package_installer()
+
+    def get_config(self):
+        return self.settings.get("setup").get(self.setup_type, {})
+
+    def get_dependencies(self):
+        return self.get_config().get("dependencies", [])
+
+    def get_npm_dependencies(self):
+        return self.get_config().get("npmDependencies", [])
+
+    def requires(self, requirement_name):
+        return requirement_name in self.get_dependencies()
 
     def run_root_sql(self, command):
         self.run_command(["sudo", "-u", "postgres", "psql", "-c", command])
@@ -32,7 +41,7 @@ class SetupStemAppCommand(BaseStemAppCommand):
     def populate_database(self, database_name):
         if prompt_for("Would you like to import a database?", implicit_yes=False):
             file_path = valid_input_for(query="Please enter the path to the file: ",
-                                            is_valid=lambda x: os.path.isfile(x) and x.endswith(".sql"))
+                                        is_valid=lambda x: os.path.isfile(x) and x.endswith(".sql"))
             self.run_command(["sudo", "-u", "postgres", "psql", database_name, "<", file_path])
 
     def run(self):
@@ -55,29 +64,48 @@ class SetupStemAppCommand(BaseStemAppCommand):
         destination_file = self.get_project_path(project_name, "local_settings.py")
         render_template(template_file, destination_file, context)
 
-        self.create_database_user(context["database_user"], context["database_password"])
-        self.create_database(context["database_name"], context["database_user"])
+        if self.requires("postgresql"):
+            self.create_database_user(context["database_user"], context["database_password"])
+            self.create_database(context["database_name"], context["database_user"])
 
-        self.populate_database(context["database_name"])
+            self.populate_database(context["database_name"])
 
-        if self.setup_type == "dev":
-            self.run_command(["python3", "manage.py", "makemigrations"])
-            self.run_command(["python3", "manage.py", "migrate"])
-            if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
-                self.run_command(["python3", "manage.py", "createsuperuser"])
+            if self.setup_type == "dev":
+                self.run_command(["python3", "manage.py", "makemigrations"])
+                self.run_command(["python3", "manage.py", "migrate"])
+                if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
+                    self.run_command(["python3", "manage.py", "createsuperuser"])
 
-        BuildStemAppCommand(watch=False).run()
+        extra_commands = self.get_config().get("command", [])
+        if not isinstance(extra_commands, list):
+            extra_commands = [extra_commands]
+        for command in extra_commands:
+            if isinstance(command, str):
+                command = {"command": command}
+            CustomStemAppCommand(command).run()
+
+        CustomStemAppCommand("build").run()
 
     def install_requirements(self):
-        self.installer.install_postgresql()
+        special = ["postgresql", "nodejs", "pip3"]
 
-        self.installer.ensure_packages_installed(SETUP_REQUIREMENTS)
-        self.installer.install_nodejs()
+        if self.requires("postgresql"):
+            self.installer.install_postgresql()
 
-        print("Installing global node requirements", SETUP_NPM_REQUIREMENTS)
-        self.run_command(["sudo", "npm", "install", "-g"] + SETUP_NPM_REQUIREMENTS)
-        self.run_command(["npm", "install"])
+        if self.requires("nodejs"):
+            self.installer.install_nodejs()
+
+        raw_dependencies = [dependency for dependency in self.get_dependencies() if dependency not in special]
+        self.installer.ensure_packages_installed(raw_dependencies)
+
+        if self.requires("nodejs"):
+            npm_dependencies = self.get_npm_dependencies()
+            if len(npm_dependencies):
+                self.run_command(["sudo", "npm", "install", "-g"] + npm_dependencies)
+                self.run_command(["npm", "install"])
         # TODO: create virtualenv
         if sys.platform.startswith("linux"):
             self.installer.install_packages(["python3-dev", "build-essential"])
-        self.run_command(["sudo", "pip3", "install", "--upgrade", "-r", "requirements.txt"])
+
+        if self.requires("pip3"):
+            self.run_command(["sudo", "pip3", "install", "--upgrade", "-r", "requirements.txt"])
