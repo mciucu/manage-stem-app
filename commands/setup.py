@@ -70,21 +70,15 @@ class SetupStemAppCommand(BaseStemAppCommand):
 
             self.populate_database(context["database_name"])
 
-            if self.setup_type == "dev":
-                self.run_command(["python3", "manage.py", "makemigrations"])
-                self.run_command(["python3", "manage.py", "migrate"])
-                if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
-                    self.run_command(["python3", "manage.py", "createsuperuser"])
-
         extra_commands = self.get_config().get("command", [])
         if not isinstance(extra_commands, list):
             extra_commands = [extra_commands]
         for command in extra_commands:
-            if isinstance(command, str):
-                command = {"command": command}
             CustomStemAppCommand(command).run()
 
-        CustomStemAppCommand("build").run()
+        if self.setup_type == "dev":
+            if prompt_for("Would you like to create a website account with superuser rights? (needed to access the Django admin interface)"):
+                self.run_command(["python3", "manage.py", "createsuperuser"])
 
     def install_requirements(self):
         special = ["postgresql", "nodejs", "pip3"]

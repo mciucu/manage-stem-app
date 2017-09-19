@@ -16,6 +16,14 @@
       "command": "runserver"
     }]
   },
+  "djangoMakeMigrations": {
+    "isCommand": true,
+    "command": "./manage.py makemigrations"
+  },
+  "djangoMigrate": {
+    "isCommand": true,
+    "command": "./manage.py migrate"
+  },
   "build": {
     "isCommand": true,
     "path": "{{ project_main_app }}/js",
@@ -42,6 +50,8 @@
       "npmDependencies": ["babel-cli", "rollup"],
       "command": [
         "installPythonRequirements",
+        "djangoMakeMigrations",
+        "djangoMigrate",
         "build"
       ]
     },
