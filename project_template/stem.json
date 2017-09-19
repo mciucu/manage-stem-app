@@ -18,11 +18,11 @@
   },
   "djangoMakeMigrations": {
     "isCommand": true,
-    "command": "./manage.py makemigrations"
+    "command": "python3 manage.py makemigrations"
   },
   "djangoMigrate": {
     "isCommand": true,
-    "command": "./manage.py migrate"
+    "command": "python3 manage.py migrate"
   },
   "build": {
     "isCommand": true,
