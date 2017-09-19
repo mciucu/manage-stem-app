@@ -1,4 +1,8 @@
 {
+  "installPythonRequirements": {
+    "isCommand": true,
+    "command": "sudo pip3 install --upgrade -r requirements.txt"
+  },
   "djangoRun": {
     "isCommand": true,
     "command": [{
@@ -35,11 +39,18 @@
   "setup": {
     "dev": {
       "dependencies": ["redis-server", "nodejs", "postgresql"],
-      "npmDependencies": ["babel-cli", "rollup"]
+      "npmDependencies": ["babel-cli", "rollup"],
+      "command": [
+        "installPythonRequirements",
+        "build"
+      ]
     },
     "production": {
       "dependencies": ["redis-server", "nodejs", "postgresql"],
-      "npmDependencies": []
+      "npmDependencies": [],
+      "command": [
+        "installPythonRequirements"
+      ]
     }
   }
 }
